@@ -295,6 +295,21 @@ function formatCoins(amount) {
     return `${amount.toFixed(1)} coins`;
 }
 
+// Get the latest available sell price for a crop, falling back to stored history
+function getLatestSellPrice(cropId) {
+    if (bazaarData[cropId] && bazaarData[cropId].quick_status) {
+        return bazaarData[cropId].quick_status.sellPrice;
+    }
+
+    // Fall back to priceHistory (most recent entry)
+    const hist = priceHistory[cropId];
+    if (hist && hist.length) {
+        return hist[hist.length - 1].sellPrice;
+    }
+
+    return null;
+}
+
 // Advanced profit calculator with fortune and time
 function calculateAdvancedProfit() {
     const cropId = document.getElementById('crop-select').value;
@@ -305,10 +320,9 @@ function calculateAdvancedProfit() {
     const hasReplenish = document.getElementById('replenish').checked;
     const resultDiv = document.getElementById('calc-result');
 
-    if (!bazaarData[cropId]) {
-        resultDiv.innerHTML = '<span style="color: #ff9999;">Price data not loaded yet!</span>';
-        return;
-    }
+    // Try to get a usable sell price (from live data or history)
+    const sellPriceFromSource = getLatestSellPrice(cropId);
+    const priceNote = sellPriceFromSource === null ? '<span style="color: #ffcc66;">(Price not loaded — using 0 coins)</span>' : '';
 
     // Calculate total fortune
     const totalFortune = cropFortune + farmingFortune;
@@ -332,8 +346,8 @@ function calculateAdvancedProfit() {
     const totalBreaks = breakSpeed * totalSeconds;
     const totalDrops = Math.floor(totalBreaks * dropsPerBreak);
     
-    // Get price
-    const sellPrice = bazaarData[cropId].quick_status.sellPrice;
+    // Get price (use fallback if live data missing)
+    const sellPrice = sellPriceFromSource === null ? 0 : sellPriceFromSource;
     const totalCoins = sellPrice * totalDrops;
     
     // Calculate XP
@@ -356,7 +370,7 @@ function calculateAdvancedProfit() {
         <p><strong>Total blocks broken:</strong> ${totalBreaks.toLocaleString()}</p>
         <p><strong>Total crops collected:</strong> ${totalDrops.toLocaleString()}</p>
         <hr style="border-color: #4a4a4a; margin: 1rem 0;">
-        <p class="highlight">💰 Total Profit: ${formatCoins(totalCoins)}</p>
+        <p class="highlight">💰 Total Profit: ${formatCoins(totalCoins)} ${priceNote}</p>
         <p class="highlight">✨ Total Farming XP: ${totalXP.toLocaleString()} XP</p>
         <p style="color: #999; font-size: 0.9rem; margin-top: 1rem;">
             💵 Coins per hour: ${formatCoins(totalCoins / (farmTime / 60))}<br>
