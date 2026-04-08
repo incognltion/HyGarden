@@ -10,15 +10,19 @@ async function fetchBazaarData() {
         if (data.success) {
             bazaarData = data.products;
             storePriceHistory();
-            displayPrices();
-            updateCropInfoPrices();
-            document.getElementById('loading').style.display = 'none';
+            // Display updates are handled in script.js
+            if (typeof displayPrices === 'function') displayPrices();
+            if (typeof updateCropInfoPrices === 'function') updateCropInfoPrices();
+            const loading = document.getElementById('loading');
+            if (loading) loading.style.display = 'none';
         } else {
-            document.getElementById('loading').textContent = 'Failed to load. Refresh page.';
+            const loading = document.getElementById('loading');
+            if (loading) loading.textContent = 'Failed to load. Refresh page.';
         }
     } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('loading').textContent = 'API error. Try refreshing.';
+        console.error('Error fetching bazaar:', error);
+        const loading = document.getElementById('loading');
+        if (loading) loading.textContent = 'API error. Try refreshing.';
     }
 }
 
