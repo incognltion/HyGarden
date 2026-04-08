@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SkyBlock Garden Hub</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
-        <h1>🌿 SkyBlock Garden Hub</h1>
-        <p>Live crop prices & gardening info for Hypixel SkyBlock</p>
+        <h1>SkyBlock Garden Hub</h1>
+        <p>Live crop prices & gardening analytics for Hypixel SkyBlock</p>
     </header>
 
     <main>
@@ -20,90 +21,167 @@
             <div id="prices-grid" class="prices-grid"></div>
         </section>
 
-        <!-- Crop Info Section -->
-        <section id="crop-info">
-            <h2>🌾 Crop Farming Info</h2>
-            <div class="crop-cards">
-                <div class="crop-card">
-                    <h3>🥕 Carrot</h3>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> Yes (with replenish enchant)</p>
-                    <p class="price-tag" id="info-CARROT_ITEM">Loading...</p>
+        <!-- Price Graph Modal -->
+        <div id="graph-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="graph-title">Price History</h2>
+                <canvas id="price-chart"></canvas>
+                <p class="graph-note">📊 Historical price data over the last 7 days</p>
+            </div>
+        </div>
+
+        <!-- Advanced Profit Calculator -->
+        <section id="calculator">
+            <h2>📊 Advanced Profit Calculator</h2>
+            <div class="calculator-box">
+                <div class="calc-row">
+                    <div class="calc-col">
+                        <label for="crop-select">Select Crop:</label>
+                        <select id="crop-select">
+                            <option value="WHEAT">🌾 Wheat</option>
+                            <option value="CARROT_ITEM">🥕 Carrot</option>
+                            <option value="POTATO_ITEM">🥔 Potato</option>
+                            <option value="PUMPKIN">🎃 Pumpkin</option>
+                            <option value="MELON">🍈 Melon</option>
+                            <option value="COCOA_BEANS">🍫 Cocoa Beans</option>
+                            <option value="SUGAR_CANE">🌿 Sugar Cane</option>
+                            <option value="NETHER_STALK">🍄 Nether Wart</option>
+                            <option value="CACTUS">🌵 Cactus</option>
+                        </select>
+                    </div>
+
+                    <div class="calc-col">
+                        <label for="crop-fortune">Crop-Specific Fortune:</label>
+                        <input type="number" id="crop-fortune" value="0" min="0" placeholder="e.g., 250">
+                    </div>
                 </div>
-                <div class="crop-card">
-                    <h3>🥔 Potato</h3>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> Yes</p>
-                    <p class="price-tag" id="info-POTATO_ITEM">Loading...</p>
+
+                <div class="calc-row">
+                    <div class="calc-col">
+                        <label for="farming-fortune">Overall Farming Fortune:</label>
+                        <input type="number" id="farming-fortune" value="0" min="0" placeholder="e.g., 100">
+                    </div>
+
+                    <div class="calc-col">
+                        <label for="break-speed">Blocks Per Second:</label>
+                        <input type="number" id="break-speed" value="20" min="1" step="0.1" placeholder="e.g., 20">
+                    </div>
                 </div>
-                <div class="crop-card">
-                    <h3>🌾 Wheat</h3>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> Yes</p>
-                    <p class="price-tag" id="info-WHEAT">Loading...</p>
+
+                <div class="calc-row">
+                    <div class="calc-col">
+                        <label for="farm-time">Farming Time (minutes):</label>
+                        <input type="number" id="farm-time" value="60" min="1" placeholder="e.g., 60">
+                    </div>
+
+                    <div class="calc-col">
+                        <label for="replenish">
+                            <input type="checkbox" id="replenish" checked> Replenish Enchant
+                        </label>
+                    </div>
                 </div>
-                <div class="crop-card">
-                    <h3>🎃 Pumpkin</h3>
-                    <p><strong>XP per harvest:</strong> 4.5</p>
-                    <p><strong>Replenish:</strong> No</p>
-                    <p class="price-tag" id="info-PUMPKIN">Loading...</p>
-                </div>
-                <div class="crop-card">
-                    <h3>🍈 Melon</h3>
-                    <p><strong>XP per harvest:</strong> 4.5</p>
-                    <p><strong>Replenish:</strong> No</p>
-                    <p class="price-tag" id="info-MELON">Loading...</p>
-                </div>
-                <div class="crop-card">
-                    <h3>🍫 Cocoa Beans</h3>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> Yes</p>
-                    <p class="price-tag" id="info-COCOA_BEANS">Loading...</p>
-                </div>
-                <div class="crop-card">
-                    <h3>🌿 Sugar Cane</h3>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> No</p>
-                    <p class="price-tag" id="info-SUGAR_CANE">Loading...</p>
-                </div>
-                <div class="crop-card">
-                    <h3>🍄 Nether Wart</h3>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> Yes</p>
-                    <p class="price-tag" id="info-NETHER_STALK">Loading...</p>
-                </div>
-                <div class="crop-card">
-                    <h3>🌵 Cactus</h3>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> No</p>
-                    <p class="price-tag" id="info-CACTUS">Loading...</p>
-                </div>
+
+                <button onclick="calculateAdvancedProfit()">Calculate Profit & XP</button>
+
+                <div id="calc-result" class="calc-result"></div>
             </div>
         </section>
 
-        <!-- Profit Calculator -->
-        <section id="calculator">
-            <h2>📊 Simple Profit Calculator</h2>
-            <div class="calculator-box">
-                <label for="crop-select">Select Crop:</label>
-                <select id="crop-select">
-                    <option value="CARROT_ITEM">Carrot</option>
-                    <option value="POTATO_ITEM">Potato</option>
-                    <option value="WHEAT">Wheat</option>
-                    <option value="PUMPKIN">Pumpkin</option>
-                    <option value="MELON">Melon</option>
-                    <option value="COCOA_BEANS">Cocoa Beans</option>
-                    <option value="SUGAR_CANE">Sugar Cane</option>
-                    <option value="NETHER_STALK">Nether Wart</option>
-                    <option value="CACTUS">Cactus</option>
-                </select>
-
-                <label for="amount">Amount of items:</label>
-                <input type="number" id="amount" value="71680" placeholder="e.g., 71680 (full inv)">
-
-                <button onclick="calculateProfit()">Calculate</button>
-
-                <div id="calc-result" class="calc-result"></div>
+        <!-- Crop Info Section -->
+        <section id="crop-info">
+            <h2>🌾 Crop Farming Reference</h2>
+            <div class="crop-cards">
+                <div class="crop-card">
+                    <div class="crop-card-header">
+                        <img src="https://sky.coflnet.com/static/icon/CARROT_ITEM" alt="Carrot" class="crop-icon">
+                        <h3>Carrot</h3>
+                    </div>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> Yes</p>
+                    <p><strong>Avg drops:</strong> 3</p>
+                    <p class="price-tag" id="info-CARROT_ITEM">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <div class="crop-card-header">
+                        <img src="https://sky.coflnet.com/static/icon/POTATO_ITEM" alt="Potato" class="crop-icon">
+                        <h3>Potato</h3>
+                    </div>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> Yes</p>
+                    <p><strong>Avg drops:</strong> 3</p>
+                    <p class="price-tag" id="info-POTATO_ITEM">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <div class="crop-card-header">
+                        <img src="https://sky.coflnet.com/static/icon/WHEAT" alt="Wheat" class="crop-icon">
+                        <h3>Wheat</h3>
+                    </div>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> Yes</p>
+                    <p><strong>Avg drops:</strong> 1</p>
+                    <p class="price-tag" id="info-WHEAT">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <div class="crop-card-header">
+                        <img src="https://sky.coflnet.com/static/icon/PUMPKIN" alt="Pumpkin" class="crop-icon">
+                        <h3>Pumpkin</h3>
+                    </div>
+                    <p><strong>XP per harvest:</strong> 4.5</p>
+                    <p><strong>Replenish:</strong> No</p>
+                    <p><strong>Avg drops:</strong> 1</p>
+                    <p class="price-tag" id="info-PUMPKIN">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <div class="crop-card-header">
+                        <img src="https://sky.coflnet.com/static/icon/MELON" alt="Melon" class="crop-icon">
+                        <h3>Melon</h3>
+                    </div>
+                    <p><strong>XP per harvest:</strong> 4.5</p>
+                    <p><strong>Replenish:</strong> No</p>
+                    <p><strong>Avg drops:</strong> 1</p>
+                    <p class="price-tag" id="info-MELON">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <div class="crop-card-header">
+                        <img src="https://sky.coflnet.com/static/icon/COCOA_BEANS" alt="Cocoa Beans" class="crop-icon">
+                        <h3>Cocoa Beans</h3>
+                    </div>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> Yes</p>
+                    <p><strong>Avg drops:</strong> 3</p>
+                    <p class="price-tag" id="info-COCOA_BEANS">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <div class="crop-card-header">
+                        <img src="https://sky.coflnet.com/static/icon/SUGAR_CANE" alt="Sugar Cane" class="crop-icon">
+                        <h3>Sugar Cane</h3>
+                    </div>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> No</p>
+                    <p><strong>Avg drops:</strong> 1</p>
+                    <p class="price-tag" id="info-SUGAR_CANE">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <div class="crop-card-header">
+                        <img src="https://sky.coflnet.com/static/icon/NETHER_STALK" alt="Nether Wart" class="crop-icon">
+                        <h3>Nether Wart</h3>
+                    </div>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> Yes</p>
+                    <p><strong>Avg drops:</strong> 2.5</p>
+                    <p class="price-tag" id="info-NETHER_STALK">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <div class="crop-card-header">
+                        <img src="https://sky.coflnet.com/static/icon/CACTUS" alt="Cactus" class="crop-icon">
+                        <h3>Cactus</h3>
+                    </div>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> No</p>
+                    <p><strong>Avg drops:</strong> 1</p>
+                    <p class="price-tag" id="info-CACTUS">Loading...</p>
+                </div>
             </div>
         </section>
     </main>
