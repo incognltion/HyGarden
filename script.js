@@ -507,7 +507,7 @@ function findBestSellMethod(cropId, totalDrops) {
 function calculateProfit() {
     const cropId = document.getElementById('crop-select').value;
     const farmTime = parseInt(document.getElementById('farm-time')?.value) || 60;
-    const cropsPerMin = parseFloat(document.getElementById('crops-per-min')?.value) || 0;
+    const breakSpeed = parseFloat(document.getElementById('break-speed')?.value) || 20;
     const farmingFortune = parseFloat(document.getElementById('farming-fortune')?.value) || 0;
     const cropFortune = parseFloat(document.getElementById('crop-fortune')?.value) || 0;
     const farmingWisdom = parseFloat(document.getElementById('farming-wisdom')?.value) || 0;
@@ -519,27 +519,26 @@ function calculateProfit() {
     if (!resultDiv) return;
     
     // Validate input
-    if (cropsPerMin <= 0) {
-        resultDiv.innerHTML = `<p style="color: var(--red);">⚠️ Please enter your Crops/min from the game.</p>`;
+    if (breakSpeed <= 0) {
+        resultDiv.innerHTML = `<p style="color: var(--red);">⚠️ Please enter a valid break speed.</p>`;
         return;
     }
     
-    const baseDrop = BASE_DROPS[cropId];
+    const baseDrop = BASE_DROPS[cropId] || 1;
     const totalFortune = farmingFortune + cropFortune + getPetFortune(cropId);
     const fortuneMultiplier = 1 + (totalFortune / 100);
-    
-    // Calculate totals from crops/min
-    const totalDrops = Math.floor(cropsPerMin * farmTime);
-    
-    // Estimate blocks for XP calculation
     const dropsPerBlock = baseDrop * fortuneMultiplier * anitaBonus;
-    const blocksPerMinute = cropsPerMin / dropsPerBlock;
+    
+    const totalSeconds = farmTime * 60;
+    const totalBreaks = breakSpeed * totalSeconds;
+    const totalDrops = Math.floor(totalBreaks * dropsPerBlock);
+    const cropsPerMin = (totalDrops / totalSeconds) * 60;
     
     // Calculate XP
     const baseXP = XP_PER_BLOCK[cropId] || 4;
     const wisdomMult = 1 + (farmingWisdom / 100);
     const derpyXPMult = derpyActive ? 1.5 : 1.0;
-    const totalXP = Math.floor(blocksPerMinute * farmTime * baseXP * wisdomMult * derpyXPMult);
+    const totalXP = Math.floor(totalBreaks * baseXP * wisdomMult * derpyXPMult);
     
     // Find best sell method
     let bestMethod = findBestSellMethod(cropId, totalDrops);
@@ -568,7 +567,11 @@ function calculateProfit() {
             <h4>📊 Session Stats</h4>
             <div class="stats-grid">
                 <div class="stat-item">
-                    <div class="stat-value">${formatNumber(cropsPerMin)}</div>
+                    <div class="stat-value">${formatNumber(breakSpeed)}</div>
+                    <div class="stat-label">Blocks/sec</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${formatNumber(Math.floor(cropsPerMin))}</div>
                     <div class="stat-label">Crops/min</div>
                 </div>
                 <div class="stat-item">
