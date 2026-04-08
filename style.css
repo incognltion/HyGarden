@@ -665,4 +665,48 @@ footer a:hover { text-decoration: underline; }
 .info-box p {
     margin: 0.25rem 0;
 }
+/* Calculation breakdown table */
+.calc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+}
+
+.calc-table td {
+    padding: 0.3rem 0.5rem;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+.calc-table td:first-child {
+    color: #999;
+}
+
+.calc-table td:last-child {
+    text-align: right;
+    color: #98d8c8;
+}
+
+.calc-table .highlight-row td {
+    background: rgba(152, 216, 200, 0.1);
+    border-bottom: 2px solid #98d8c8;
+}
+
+.formula {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.formula strong {
+    color: #98d8c8;
+}
+
+.calculation-breakdown {
+    background: rgba(152, 216, 200, 0.05) !important;
+    border: 1px solid rgba(152, 216, 200, 0.2);
+}
 }
