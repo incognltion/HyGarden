@@ -9,14 +9,14 @@
 </head>
 <body>
     <header>
-        <h1>SkyBlock Garden Hub</h1>
-        <p>Live crop prices & accurate farming calculator for Hypixel SkyBlock</p>
+        <h1>🌿 SkyBlock Garden Hub</h1>
+        <p>Live crop prices & farming calculator for Hypixel SkyBlock</p>
     </header>
 
     <main>
         <!-- Price Dashboard -->
         <section id="prices-section">
-            <h2>💰 Live Bazaar Crop Prices</h2>
+            <h2>💰 Live Bazaar Prices</h2>
             <div id="loading">Loading prices...</div>
             <div id="prices-grid" class="prices-grid"></div>
         </section>
@@ -36,24 +36,10 @@
             <h2>📊 Farming Profit Calculator</h2>
             <div class="calculator-box">
                 
-                <!-- Input Mode Toggle -->
-                <div class="mode-toggle">
-                    <button id="mode-manual" class="mode-btn active" onclick="setInputMode('manual')">
-                        ✏️ Manual Input
-                    </button>
-                    <button id="mode-ingame" class="mode-btn" onclick="setInputMode('ingame')">
-                        🎮 Use In-Game Stats
-                    </button>
-                </div>
-                
-                <p class="mode-description" id="mode-desc">
-                    Enter your fortune values and blocks/sec to calculate expected crops.
-                </p>
-                
                 <!-- Crop Selection -->
                 <div class="calc-row">
                     <div class="calc-col">
-                        <label for="crop-select">Select Crop:</label>
+                        <label for="crop-select">🌱 Select Crop:</label>
                         <select id="crop-select" onchange="updateCropInfo()">
                             <option value="WHEAT">Wheat</option>
                             <option value="CARROT_ITEM">Carrot</option>
@@ -68,7 +54,7 @@
                         </select>
                     </div>
                     <div class="calc-col">
-                        <label for="farm-time">Farming Time (minutes):</label>
+                        <label for="farm-time">⏱️ Farming Time (minutes):</label>
                         <input type="number" id="farm-time" value="60" min="1" max="600">
                     </div>
                 </div>
@@ -78,85 +64,46 @@
                     <span id="crop-base-info">🌱 Nether Wart base drop: 2.5 per block</span>
                 </div>
 
-                <!-- MANUAL INPUT MODE -->
-                <div id="manual-inputs">
-                    <div class="calc-section-header">
-                        <h3>🍀 Your Fortune Stats</h3>
-                        <span class="section-hint">Check SkyBlock Menu → Farming</span>
-                    </div>
-                    
-                    <div class="calc-row">
-                        <div class="calc-col">
-                            <label for="farming-fortune">Farming Fortune:</label>
-                            <input type="number" id="farming-fortune" value="665" min="0" max="3000" step="0.1">
-                            <span class="input-hint">Your overall farming fortune stat</span>
-                        </div>
-                        <div class="calc-col">
-                            <label for="crop-fortune">Crop Fortune:</label>
-                            <input type="number" id="crop-fortune" value="136" min="0" max="1000" step="0.1">
-                            <span class="input-hint">Crop-specific fortune (turbo, etc.)</span>
-                        </div>
-                    </div>
-
-                    <div class="calc-section-header">
-                        <h3>⚡ Farming Speed</h3>
-                    </div>
-                    
-                    <div class="calc-row">
-                        <div class="calc-col">
-                            <label for="blocks-per-second">Blocks Per Second:</label>
-                            <input type="number" id="blocks-per-second" value="20" min="1" max="50" step="0.5">
-                            <span class="input-hint">Typically 15-25 depending on tool/setup</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- IN-GAME STATS MODE -->
-                <div id="ingame-inputs" style="display: none;">
-                    <div class="calc-section-header">
-                        <h3>🎮 Your In-Game Stats</h3>
-                        <span class="section-hint">Copy from your HUD while farming</span>
-                    </div>
-                    
-                    <div class="info-box">
-                        <p>📍 <strong>Most accurate method:</strong> Enter your crops/min shown at the top of screen while farming in the Garden.</p>
-                    </div>
-                    
-                    <div class="calc-row">
-                        <div class="calc-col">
-                            <label for="crops-per-min">Crops/min (from HUD):</label>
-                            <input type="number" id="crops-per-min" value="27000" min="0" max="500000" placeholder="e.g. 27000">
-                            <span class="input-hint">The exact number shown on screen</span>
-                        </div>
-                        <div class="calc-col">
-                            <label for="blocks-per-min">Blocks/min (optional):</label>
-                            <input type="number" id="blocks-per-min" value="" min="0" max="5000" placeholder="If you know it">
-                            <span class="input-hint">For reverse-engineering fortune</span>
-                        </div>
-                    </div>
-                    
-                    <div class="calc-row">
-                        <div class="calc-col">
-                            <label for="farming-fortune-ingame">Farming Fortune (optional):</label>
-                            <input type="number" id="farming-fortune-ingame" value="665" min="0" step="0.1" placeholder="e.g. 665">
-                        </div>
-                        <div class="calc-col">
-                            <label for="crop-fortune-ingame">Crop Fortune (optional):</label>
-                            <input type="number" id="crop-fortune-ingame" value="136" min="0" step="0.1" placeholder="e.g. 136">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Wisdom -->
+                <!-- In-Game Stats -->
                 <div class="calc-section-header">
-                    <h3>📚 Wisdom</h3>
+                    <h3>🎮 Your In-Game Stats</h3>
+                    <span class="section-hint">Copy from your HUD while farming</span>
+                </div>
+                
+                <div class="info-box">
+                    <p>📍 Enter your <strong>crops/min</strong> shown at the top of screen while farming in the Garden.</p>
                 </div>
                 
                 <div class="calc-row">
                     <div class="calc-col">
-                        <label for="farming-wisdom">Farming Wisdom:</label>
+                        <label for="crops-per-min">📦 Crops/min (from HUD):</label>
+                        <input type="number" id="crops-per-min" value="27000" min="0" max="500000" placeholder="e.g. 27000">
+                    </div>
+                </div>
+
+                <!-- Fortune Stats -->
+                <div class="calc-section-header">
+                    <h3>☘️ Fortune Stats</h3>
+                    <span class="section-hint">Optional - for XP calculation</span>
+                </div>
+                
+                <div class="calc-row">
+                    <div class="calc-col">
+                        <label for="farming-fortune">☘️ Farming Fortune:</label>
+                        <input type="number" id="farming-fortune" value="665" min="0" step="0.1" placeholder="e.g. 665">
+                    </div>
+                    <div class="calc-col">
+                        <label for="crop-fortune">🌾 Crop Fortune:</label>
+                        <input type="number" id="crop-fortune" value="136" min="0" step="0.1" placeholder="e.g. 136">
+                    </div>
+                </div>
+
+                <!-- Wisdom -->
+                <div class="calc-row">
+                    <div class="calc-col">
+                        <label for="farming-wisdom">📚 Farming Wisdom:</label>
                         <input type="number" id="farming-wisdom" value="0" min="0" max="500">
-                        <span class="input-hint">Increases XP gained (not drops)</span>
+                        <span class="input-hint">Increases XP gained</span>
                     </div>
                 </div>
 
@@ -168,19 +115,19 @@
                 <div class="checkbox-grid">
                     <label class="checkbox-label">
                         <input type="checkbox" id="anita-bonus">
-                        <span>Anita Bonus <span class="bonus-value">(+10% crops)</span></span>
+                        <span>🌸 Anita Bonus (+10%)</span>
                     </label>
                     <label class="checkbox-label">
                         <input type="checkbox" id="derpy-active">
-                        <span>Mayor Derpy <span class="bonus-value">(+50% XP, ÷2 coins)</span></span>
+                        <span>🤪 Mayor Derpy</span>
                     </label>
                     <label class="checkbox-label">
                         <input type="checkbox" id="elephant-pet" onchange="togglePetOptions('elephant')">
-                        <span>Elephant Pet</span>
+                        <span>🐘 Elephant Pet</span>
                     </label>
                     <label class="checkbox-label">
                         <input type="checkbox" id="mooshroom-pet" onchange="togglePetOptions('mooshroom')">
-                        <span>Mooshroom Cow <span class="bonus-value">(mushrooms)</span></span>
+                        <span>🐄 Mooshroom Cow</span>
                     </label>
                 </div>
 
@@ -209,16 +156,15 @@
                 <!-- Elephant Speed Option -->
                 <div id="elephant-options" class="pet-options" style="display: none;">
                     <div class="calc-row">
-                        <div class="calc-col">
-                            <label for="player-speed">Your Speed Stat:</label>
+                        <div class="calc-col full-width">
+                            <label for="player-speed">⚡ Your Speed Stat:</label>
                             <input type="number" id="player-speed" value="400" min="100" max="600" onchange="updatePetBonus()">
-                            <span class="input-hint">Base 100 + bonuses</span>
                         </div>
                     </div>
                     <div id="elephant-bonus-display" class="pet-bonus-display"></div>
                 </div>
 
-                <button onclick="calculateAdvancedProfit()">🧮 Calculate Profit</button>
+                <button onclick="calculateProfit()">🧮 Calculate Profit</button>
 
                 <div id="calc-result" class="calc-result"></div>
             </div>
@@ -305,8 +251,8 @@
     </main>
 
     <footer>
-        <p>Prices from <a href="https://api.hypixel.net/" target="_blank">Hypixel API</a> · NPC prices from <a href="https://wiki.hypixel.net/" target="_blank">Wiki</a></p>
-        <p>Made with 🌱 for SkyBlock farmers</p>
+        <p>Prices from <a href="https://api.hypixel.net/" target="_blank">Hypixel API</a> · Data from <a href="https://wiki.hypixel.net/" target="_blank">Wiki</a></p>
+        <p>Made with 🌿 for SkyBlock farmers</p>
     </footer>
 
     <script src="script.js"></script>
