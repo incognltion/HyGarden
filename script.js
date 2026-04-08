@@ -53,22 +53,40 @@ const NPC_SELL_PRICES = {
     'ENCHANTED_RED_MUSHROOM_BLOCK': 102400,
 };
 
-// Base drops per block broken (before fortune)
-// This is what the game uses as the base for fortune calculation
+// =============================================================
+// CORRECT BASE DROPS PER BLOCK (from SkyBlock / vanilla mechanics)
+// =============================================================
+// These are the average drops BEFORE fortune is applied
+// Fortune formula: drops = BASE_DROP × (1 + totalFortune/100)
 const BASE_DROPS_PER_BLOCK = {
-    'WHEAT': 1,
-    'CARROT_ITEM': 3,
-    'POTATO_ITEM': 3,
-    'PUMPKIN': 1,
-    'MELON': 4,
-    'COCOA_BEANS': 2.5,
-    'SUGAR_CANE': 1,
-    'NETHER_STALK': 2.5,
-    'CACTUS': 1,
+    'WHEAT': 1,           // Always 1 wheat per break
+    'CARROT_ITEM': 3,     // Vanilla avg 2-5, SkyBlock uses ~3
+    'POTATO_ITEM': 3,     // Vanilla avg 2-5, SkyBlock uses ~3
+    'PUMPKIN': 1,         // Always 1 pumpkin
+    'MELON': 4,           // Vanilla avg 3-7, SkyBlock uses ~4
+    'COCOA_BEANS': 2.5,   // Vanilla avg 2-3
+    'SUGAR_CANE': 1,      // 1 per block (but multiple blocks per plant)
+    'NETHER_STALK': 2.5,  // Vanilla avg 2-4, confirmed ~2.5
+    'CACTUS': 1,          // 1 per block (but multiple blocks per plant)
     'MUSHROOM_COLLECTION': 1,
 };
 
-// Farming XP per block broken
+// How many blocks you typically break per plant
+// Used for XP calculations (XP is per block, not per drop)
+const BLOCKS_PER_PLANT = {
+    'WHEAT': 1,
+    'CARROT_ITEM': 1,
+    'POTATO_ITEM': 1,
+    'PUMPKIN': 1,
+    'MELON': 1,
+    'COCOA_BEANS': 1,
+    'SUGAR_CANE': 2,      // Usually 2 blocks per plant on avg
+    'NETHER_STALK': 1,
+    'CACTUS': 2,          // Usually 2 blocks per plant on avg
+    'MUSHROOM_COLLECTION': 1,
+};
+
+// Farming XP per block broken (not per crop dropped)
 const XP_PER_BLOCK = {
     'WHEAT': 4,
     'CARROT_ITEM': 4,
@@ -124,7 +142,7 @@ const MOOSHROOM_FORTUNE = {
     'mythic': { base: 30, perLevel: 0.35 },
 };
 
-// Elephant pet: fortune = multiplier * (speed - 100)
+// Elephant pet: fortune = multiplier × (speed - 100)
 const ELEPHANT_FORTUNE_MULT = {
     'common': 0.15,
     'uncommon': 0.17,
@@ -138,7 +156,7 @@ let bazaarData = {};
 let priceHistory = {};
 let currentChart = null;
 let activePet = null;
-let inputMode = 'manual'; // 'manual' or 'ingame'
+let inputMode = 'manual';
 
 // =====================================================
 // UTILITY FUNCTIONS
@@ -459,6 +477,7 @@ function calculateSellStrategies(cropId, totalDrops) {
             
             const t2Sell = bazaarData[t2.id]?.quick_status?.sellPrice || 0;
             const t2Buy = bazaarData[t2.id]?.quick_status?.buyPrice || 0;
+            const t2Npc = NPC_SELL_PRICES[t2.id] || 0;
             
             if (t2Sell > 0 && t2Count > 0) {
                 strategies.push({ 
@@ -470,6 +489,12 @@ function calculateSellStrategies(cropId, totalDrops) {
                 strategies.push({ 
                     name: 'Ench. T2 Sell Order', 
                     coins: (t2Count * t2Buy) + (t1FromLeft * t1Buy) + (rawLeft * bazaarBuy) 
+                });
+            }
+            if (t2Npc > 0 && t2Count > 0) {
+                strategies.push({ 
+                    name: 'Ench. T2 NPC', 
+                    coins: (t2Count * t2Npc) + (t1FromLeft * t1Npc) + (rawLeft * npcPrice) 
                 });
             }
         }
@@ -493,35 +518,57 @@ function calculateAdvancedProfit() {
     const resultDiv = document.getElementById('calc-result');
     if (!resultDiv) return;
     
-    let totalDrops, totalBlocks, dropsPerMinute, blocksPerMinute;
+    // Get base drop for this crop
+    const baseDrop = BASE_DROPS_PER_BLOCK[cropId] || 1;
+    
+    let totalDrops, totalBlocks, cropsPerMinute, blocksPerMinute;
     let totalFortune = 0;
     let fortuneMultiplier = 1;
+    let calculationMethod = '';
     
     if (inputMode === 'ingame') {
-        // Use in-game stats directly
+        // =====================================================
+        // IN-GAME STATS MODE - Use player's actual crops/min
+        // =====================================================
         const cropsPerMin = parseFloat(document.getElementById('crops-per-min')?.value) || 0;
         const blocksPerMin = parseFloat(document.getElementById('blocks-per-min')?.value) || 0;
         
-        // If user only entered crops/min, use that
         if (cropsPerMin > 0) {
-            dropsPerMinute = cropsPerMin;
+            // User entered crops/min directly - most accurate!
+            cropsPerMinute = cropsPerMin;
             totalDrops = Math.floor(cropsPerMin * farmTime);
+            calculationMethod = 'Using your in-game crops/min';
             
-            // Estimate blocks from crops if blocks/min not provided
+            // Calculate blocks from crops if blocks/min provided
             if (blocksPerMin > 0) {
                 blocksPerMinute = blocksPerMin;
                 totalBlocks = Math.floor(blocksPerMin * farmTime);
-                fortuneMultiplier = cropsPerMin / blocksPerMin;
+                
+                // Reverse engineer fortune: crops = blocks × baseDrop × fortuneMult × anita
+                // fortuneMult = crops / (blocks × baseDrop × anita)
+                fortuneMultiplier = cropsPerMin / (blocksPerMin * baseDrop * anitaBonus);
                 totalFortune = (fortuneMultiplier - 1) * 100;
             } else {
-                // Can't determine blocks, just use crops
-                blocksPerMinute = 0;
-                totalBlocks = 0;
+                // Estimate blocks from fortune if provided
+                const ff = parseFloat(document.getElementById('farming-fortune-ingame')?.value) || 0;
+                const cf = parseFloat(document.getElementById('crop-fortune-ingame')?.value) || 0;
+                const petFortune = getPetFortune(cropId);
+                
+                if (ff > 0 || cf > 0) {
+                    totalFortune = ff + cf + petFortune;
+                    fortuneMultiplier = 1 + (totalFortune / 100);
+                    blocksPerMinute = cropsPerMin / (baseDrop * fortuneMultiplier * anitaBonus);
+                    totalBlocks = Math.floor(blocksPerMinute * farmTime);
+                } else {
+                    blocksPerMinute = 0;
+                    totalBlocks = 0;
+                }
             }
         } else if (blocksPerMin > 0) {
             // Only blocks/min provided - need fortune to calculate crops
             blocksPerMinute = blocksPerMin;
             totalBlocks = Math.floor(blocksPerMin * farmTime);
+            calculationMethod = 'Calculated from blocks/min + fortune';
             
             const ff = parseFloat(document.getElementById('farming-fortune-ingame')?.value) || 0;
             const cf = parseFloat(document.getElementById('crop-fortune-ingame')?.value) || 0;
@@ -530,58 +577,81 @@ function calculateAdvancedProfit() {
             totalFortune = ff + cf + petFortune;
             fortuneMultiplier = 1 + (totalFortune / 100);
             
-            dropsPerMinute = blocksPerMin * fortuneMultiplier * anitaBonus;
-            totalDrops = Math.floor(dropsPerMinute * farmTime);
+            // crops = blocks × baseDrop × fortuneMult × anita
+            cropsPerMinute = blocksPerMin * baseDrop * fortuneMultiplier * anitaBonus;
+            totalDrops = Math.floor(cropsPerMinute * farmTime);
         } else {
-            resultDiv.innerHTML = `<p style="color: #ff9999;">Please enter your Crops/min or Blocks/min from the game.</p>`;
+            resultDiv.innerHTML = `<p style="color: #ff9999;">⚠️ Please enter your Crops/min from the game screen.</p>`;
             return;
         }
     } else {
-        // Manual calculation mode
+        // =====================================================
+        // MANUAL MODE - Calculate from fortune + blocks/sec
+        // =====================================================
         const farmingFortune = parseFloat(document.getElementById('farming-fortune')?.value) || 0;
         const cropFortune = parseFloat(document.getElementById('crop-fortune')?.value) || 0;
         const blocksPerSecond = parseFloat(document.getElementById('blocks-per-second')?.value) || 20;
-        
         const petFortune = getPetFortune(cropId);
+        
+        calculationMethod = 'Calculated from fortune + BPS';
         
         totalFortune = farmingFortune + cropFortune + petFortune;
         fortuneMultiplier = 1 + (totalFortune / 100);
         
-        const baseDrop = BASE_DROPS_PER_BLOCK[cropId] || 1;
+        // crops = blocks × baseDrop × fortuneMult × anita
         const dropsPerBlock = baseDrop * fortuneMultiplier * anitaBonus;
         
         blocksPerMinute = blocksPerSecond * 60;
-        dropsPerMinute = blocksPerMinute * dropsPerBlock;
+        cropsPerMinute = blocksPerMinute * dropsPerBlock;
         
         totalBlocks = Math.floor(blocksPerMinute * farmTime);
-        totalDrops = Math.floor(dropsPerMinute * farmTime);
+        totalDrops = Math.floor(cropsPerMinute * farmTime);
     }
     
-    // Calculate XP
+    // =====================================================
+    // Calculate XP (based on blocks broken, not crops)
+    // =====================================================
     const baseXP = XP_PER_BLOCK[cropId] || 4;
     const wisdomMult = 1 + (farmingWisdom / 100);
-    const derpyMult = derpyActive ? 1.5 : 1.0;
-    const xpPerMinute = (blocksPerMinute || dropsPerMinute) * baseXP * wisdomMult * derpyMult;
-    const totalXP = Math.floor(xpPerMinute * farmTime);
+    const derpyXPMult = derpyActive ? 1.5 : 1.0;
     
-    // Get sell strategies
-    const strategies = calculateSellStrategies(cropId, totalDrops);
-    let bestStrategy = strategies[0] || { name: 'N/A', coins: 0 };
-    
-    // Apply Derpy coin reduction
-    if (derpyActive) {
-        strategies.forEach(s => s.coins *= 0.5);
-        bestStrategy = strategies[0] || { name: 'N/A', coins: 0 };
+    // If we don't have blocks, estimate from crops
+    let xpBlocksPerMin = blocksPerMinute;
+    if (!xpBlocksPerMin && cropsPerMinute > 0) {
+        // Estimate: blocks ≈ crops / (baseDrop × fortuneMult)
+        xpBlocksPerMin = cropsPerMinute / (baseDrop * fortuneMultiplier * anitaBonus);
     }
     
+    const xpPerMinute = xpBlocksPerMin * baseXP * wisdomMult * derpyXPMult;
+    const totalXP = Math.floor(xpPerMinute * farmTime);
+    
+    // =====================================================
+    // Get sell strategies
+    // =====================================================
+    let strategies = calculateSellStrategies(cropId, totalDrops);
+    
+    // Apply Derpy coin reduction BEFORE selecting best
+    if (derpyActive) {
+        strategies = strategies.map(s => ({...s, coins: s.coins * 0.5}));
+    }
+    
+    // Sort again after Derpy adjustment
+    strategies.sort((a, b) => b.coins - a.coins);
+    
+    const bestStrategy = strategies[0] || { name: 'N/A', coins: 0 };
+    
+    // =====================================================
     // Hourly rates
+    // =====================================================
     const hours = farmTime / 60;
     const coinsPerHour = bestStrategy.coins / hours;
     const xpPerHour = totalXP / hours;
     const cropsPerHour = totalDrops / hours;
     
-    // Build strategies HTML
-    const strategiesHtml = strategies.slice(0, 5).map((s, i) => `
+    // =====================================================
+    // Build output HTML
+    // =====================================================
+    const strategiesHtml = strategies.slice(0, 6).map((s, i) => `
         <div class="strategy-item ${i === 0 ? 'best' : ''}">
             <span class="strategy-name">${i === 0 ? '👑 ' : ''}${s.name}</span>
             <span class="strategy-coins">${formatCoins(s.coins)}</span>
@@ -593,20 +663,23 @@ function calculateAdvancedProfit() {
             <img src="${getItemIcon(cropId)}" alt="${GARDEN_CROPS[cropId]}" class="crop-icon" onerror="this.style.display='none'">
             <div>
                 <h3>${GARDEN_CROPS[cropId]} Results</h3>
-                <p>${farmTime} minutes farming</p>
+                <p>${farmTime} minutes · ${calculationMethod}</p>
             </div>
         </div>
         
-        ${totalFortune > 0 ? `
         <div class="result-section">
-            <h4>🍀 Fortune</h4>
-            <p>Total Fortune: <span class="highlight-value">${totalFortune.toFixed(1)}</span></p>
-            <p>Drop Multiplier: <span class="highlight-value">${fortuneMultiplier.toFixed(2)}x</span></p>
+            <h4>🍀 Fortune & Drops</h4>
+            <div class="fortune-breakdown">
+                <p><strong>Base drop:</strong> ${baseDrop} per block</p>
+                ${totalFortune > 0 ? `<p><strong>Total Fortune:</strong> <span class="highlight-value">${totalFortune.toFixed(1)}</span></p>` : ''}
+                <p><strong>Fortune Multiplier:</strong> <span class="highlight-value">${fortuneMultiplier.toFixed(2)}x</span></p>
+                ${anitaBonus > 1 ? `<p><strong>Anita Bonus:</strong> +10%</p>` : ''}
+                <p><strong>Final drops/block:</strong> <span class="highlight-value">${(baseDrop * fortuneMultiplier * anitaBonus).toFixed(2)}</span></p>
+            </div>
         </div>
-        ` : ''}
         
         <div class="result-section">
-            <h4>📦 Farming Stats</h4>
+            <h4>📊 Farming Stats</h4>
             <div class="stats-grid">
                 ${blocksPerMinute > 0 ? `
                 <div class="stat-item">
@@ -615,7 +688,7 @@ function calculateAdvancedProfit() {
                 </div>
                 ` : ''}
                 <div class="stat-item">
-                    <div class="stat-value">${formatNumber(dropsPerMinute)}</div>
+                    <div class="stat-value">${formatNumber(cropsPerMinute)}</div>
                     <div class="stat-label">Crops/min</div>
                 </div>
                 <div class="stat-item">
@@ -626,42 +699,84 @@ function calculateAdvancedProfit() {
         </div>
         
         <div class="best-profit-box">
-            <h4>💰 Best Profit</h4>
+            <h4>💰 Best Profit (${farmTime} min)</h4>
             <div class="big-number">${formatCoins(bestStrategy.coins)}</div>
             <div class="method">${bestStrategy.name}</div>
-            ${derpyActive ? '<p style="color:#ff9999;font-size:0.8rem;">⚠️ Derpy: -50% coins</p>' : ''}
+            ${derpyActive ? '<p style="color:#ff9999;font-size:0.8rem;margin-top:0.5rem;">⚠️ Derpy: Coins halved</p>' : ''}
         </div>
         
         <div class="result-section">
-            <h4>💹 Sell Options</h4>
+            <h4>💹 All Sell Options</h4>
             <div class="strategies-container">${strategiesHtml}</div>
         </div>
         
         <div class="result-section">
-            <h4>📈 Per Hour</h4>
+            <h4>📈 Hourly Rates</h4>
             <div class="stats-grid">
                 <div class="stat-item">
                     <div class="stat-value">${formatCoins(coinsPerHour)}</div>
-                    <div class="stat-label">Coins</div>
+                    <div class="stat-label">Coins/hr</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">${formatNumber(Math.floor(xpPerHour))}</div>
-                    <div class="stat-label">XP</div>
+                    <div class="stat-label">XP/hr</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">${formatNumber(Math.floor(cropsPerHour))}</div>
-                    <div class="stat-label">Crops</div>
+                    <div class="stat-label">Crops/hr</div>
                 </div>
             </div>
         </div>
         
         <div class="result-section">
             <h4>⭐ Experience</h4>
-            <p>Total XP: <span class="highlight-value">${formatNumber(totalXP)}</span></p>
-            ${farmingWisdom > 0 ? `<p>Wisdom Bonus: +${farmingWisdom}%</p>` : ''}
-            ${derpyActive ? `<p>Derpy Bonus: +50% XP</p>` : ''}
+            <p><strong>Total XP:</strong> <span class="highlight-value">${formatNumber(totalXP)}</span></p>
+            <p><strong>XP/block:</strong> ${baseXP}</p>
+            ${farmingWisdom > 0 ? `<p><strong>Wisdom bonus:</strong> +${farmingWisdom}%</p>` : ''}
+            ${derpyActive ? `<p><strong>Derpy bonus:</strong> +50% XP</p>` : ''}
+        </div>
+        
+        <div class="result-section debug-info">
+            <h4>🔍 Calculation Details</h4>
+            <p style="font-size: 0.8rem; color: #888;">
+                Formula: ${baseDrop} base × ${fortuneMultiplier.toFixed(2)} fortune × ${anitaBonus} anita = ${(baseDrop * fortuneMultiplier * anitaBonus).toFixed(2)} drops/block<br>
+                ${blocksPerMinute > 0 ? `${formatNumber(blocksPerMinute)} blocks/min × ${(baseDrop * fortuneMultiplier * anitaBonus).toFixed(2)} = ${formatNumber(cropsPerMinute)} crops/min` : ''}
+            </p>
         </div>
     `;
+}
+
+// =====================================================
+// VALIDATION HELPER - Test with known values
+// =====================================================
+
+function testCalculation() {
+    // Your values: 664.8 FF + 136 CF = 800.8 fortune
+    // 27k crops/min with Nether Wart
+    
+    const testFortune = 664.8 + 136; // 800.8
+    const testMultiplier = 1 + (testFortune / 100); // 9.008
+    const baseDrop = 2.5; // Nether Wart
+    
+    // If 27k crops/min:
+    const cropsPerMin = 27000;
+    const blocksPerMin = cropsPerMin / (baseDrop * testMultiplier); // Should be ~1199
+    const blocksPerSec = blocksPerMin / 60; // Should be ~20
+    
+    console.log('=== TEST CALCULATION ===');
+    console.log(`Fortune: ${testFortune}`);
+    console.log(`Multiplier: ${testMultiplier}`);
+    console.log(`Base drop: ${baseDrop}`);
+    console.log(`Crops/min: ${cropsPerMin}`);
+    console.log(`Calculated blocks/min: ${blocksPerMin.toFixed(1)}`);
+    console.log(`Calculated blocks/sec: ${blocksPerSec.toFixed(1)}`);
+    console.log('========================');
+    
+    return {
+        fortune: testFortune,
+        multiplier: testMultiplier,
+        blocksPerSec: blocksPerSec
+    };
 }
 
 // =====================================================
@@ -678,13 +793,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     window.onclick = (e) => {
         if (e.target == modal) modal.style.display = 'none';
-    }
+    };
     
     loadPriceHistory();
     fetchBazaarData();
-    
-    // Set default mode
     setInputMode('manual');
+    
+    // Run test in console
+    testCalculation();
 });
 
 setInterval(fetchBazaarData, 60000);

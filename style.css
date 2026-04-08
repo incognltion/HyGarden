@@ -580,4 +580,89 @@ footer a:hover { text-decoration: underline; }
     main { padding: 1rem; }
     .prices-grid, .crop-cards { grid-template-columns: 1fr; }
     .mode-toggle { flex-direction: column; }
+    /* Add these new styles to your existing CSS */
+
+.crop-info-box {
+    background: rgba(152, 216, 200, 0.1);
+    border: 1px solid rgba(152, 216, 200, 0.2);
+    border-radius: 5px;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: #98d8c8;
+}
+
+.mode-description {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+
+.fortune-breakdown {
+    display: grid;
+    gap: 0.3rem;
+}
+
+.fortune-breakdown p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.debug-info {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px dashed #555 !important;
+}
+
+.debug-info h4 {
+    color: #888 !important;
+}
+
+/* Mode Toggle */
+.mode-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    background: #2a2a2a;
+    padding: 0.25rem;
+    border-radius: 6px;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border: none;
+    background: transparent;
+    color: #888;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.mode-btn:hover {
+    color: #ccc;
+}
+
+.mode-btn.active {
+    background: #98d8c8;
+    color: #1a1a1a;
+    font-weight: bold;
+}
+
+/* Info Box */
+.info-box {
+    background: rgba(152, 216, 200, 0.1);
+    border: 1px solid rgba(152, 216, 200, 0.3);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+}
+
+.info-box p {
+    margin: 0.25rem 0;
+}
 }
