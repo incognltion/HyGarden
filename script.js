@@ -1,14 +1,14 @@
 // Crop items we want to track from the Bazaar
 const GARDEN_CROPS = {
-    'WHEAT': '🌾 Wheat',
-    'CARROT_ITEM': '🥕 Carrot',
-    'POTATO_ITEM': '🥔 Potato',
-    'PUMPKIN': '🎃 Pumpkin',
-    'MELON': '🍈 Melon',
-    'COCOA_BEANS': '🍫 Cocoa Beans',
-    'SUGAR_CANE': '🌿 Sugar Cane',
-    'NETHER_STALK': '🍄 Nether Wart',
-    'CACTUS': '🌵 Cactus',
+    'WHEAT': 'Wheat',
+    'CARROT_ITEM': 'Carrot',
+    'POTATO_ITEM': 'Potato',
+    'PUMPKIN': 'Pumpkin',
+    'MELON': 'Melon',
+    'COCOA_BEANS': 'Cocoa Beans',
+    'SUGAR_CANE': 'Sugar Cane',
+    'NETHER_STALK': 'Nether Wart',
+    'CACTUS': 'Cactus',
 };
 
 // Base drops per harvest (without fortune)
@@ -52,6 +52,31 @@ const EXTRA_ITEMS = {
 let bazaarData = {};
 let priceHistory = {};
 let currentChart = null;
+// Conversion ratios: how many base crops make one enchanted (default values)
+const ENCHANTED_CONVERSION = {
+    'WHEAT': 160,
+    'CARROT_ITEM': 160,
+    'POTATO_ITEM': 160,
+    'PUMPKIN': 64,
+    'MELON': 64,
+    'COCOA_BEANS': 160,
+    'SUGAR_CANE': 64,
+    'NETHER_STALK': 64,
+    'CACTUS': 64,
+};
+
+// Map base item -> enchanted item id
+const ENCHANTED_MAP = {
+    'CARROT_ITEM': 'ENCHANTED_CARROT',
+    'POTATO_ITEM': 'ENCHANTED_POTATO',
+    'PUMPKIN': 'ENCHANTED_PUMPKIN',
+    'MELON': 'ENCHANTED_MELON',
+    'SUGAR_CANE': 'ENCHANTED_SUGAR',
+    'COCOA_BEANS': 'ENCHANTED_COCOA',
+    'CACTUS': 'ENCHANTED_CACTUS_GREEN',
+    'NETHER_STALK': 'ENCHANTED_NETHER_STALK',
+    'WHEAT': 'ENCHANTED_WHEAT',
+};
 
 // Get item icon URL
 function getItemIcon(itemId) {
@@ -310,6 +335,53 @@ function getLatestSellPrice(cropId) {
     return null;
 }
 
+// Estimate NPC price (approx) based on latest sell price — labeled clearly as estimate
+function estimateNpcPricePerItem(cropId) {
+    const latest = getLatestSellPrice(cropId);
+    if (latest === null) return null;
+    // Estimate NPC sells for a small fraction of bazaar (approx 10%) — changeable if you want exact values
+    return Math.max(0, Math.round(latest * 0.10));
+}
+
+// Calculate best selling method given total drops and available marketplace prices
+function calculateBestSell(totalDrops, cropId, rawSellPrice) {
+    const rawCoins = rawSellPrice * totalDrops;
+
+    // Enchanted path (if priced in bazaar)
+    let enchantedCoins = null;
+    const enchId = ENCHANTED_MAP[cropId];
+    const conversion = ENCHANTED_CONVERSION[cropId] || null;
+    if (enchId && conversion && (bazaarData[enchId] && bazaarData[enchId].quick_status)) {
+        const enchPrice = bazaarData[enchId].quick_status.sellPrice;
+        const numEnch = Math.floor(totalDrops / conversion);
+        const leftover = totalDrops - (numEnch * conversion);
+        enchantedCoins = (numEnch * enchPrice) + (leftover * rawSellPrice);
+    }
+
+    // NPC estimate
+    const npcPer = estimateNpcPricePerItem(cropId);
+    const npcCoins = npcPer === null ? null : npcPer * totalDrops;
+
+    // Choose best (consider only non-null values)
+    const candidates = [];
+    candidates.push({method: 'Raw Bazaar Sell', coins: rawCoins});
+    if (enchantedCoins !== null) candidates.push({method: 'Sell Enchanted', coins: enchantedCoins});
+    if (npcCoins !== null) candidates.push({method: 'NPC (estimated)', coins: npcCoins});
+
+    let best = candidates[0];
+    for (const c of candidates) {
+        if (c.coins > best.coins) best = c;
+    }
+
+    return {
+        rawCoins,
+        enchantedCoins,
+        npcPer,
+        npcCoins,
+        best
+    };
+}
+
 // Advanced profit calculator with fortune and time
 function calculateAdvancedProfit() {
     const cropId = document.getElementById('crop-select').value;
@@ -349,6 +421,9 @@ function calculateAdvancedProfit() {
     // Get price (use fallback if live data missing)
     const sellPrice = sellPriceFromSource === null ? 0 : sellPriceFromSource;
     const totalCoins = sellPrice * totalDrops;
+
+    // Determine best way to sell (raw vs enchanted vs NPC estimated)
+    const sellAnalysis = calculateBestSell(totalDrops, cropId, sellPrice);
     
     // Calculate XP
     const xpPerBreak = XP_PER_BREAK[cropId];
@@ -371,6 +446,12 @@ function calculateAdvancedProfit() {
         <p><strong>Total crops collected:</strong> ${totalDrops.toLocaleString()}</p>
         <hr style="border-color: #4a4a4a; margin: 1rem 0;">
         <p class="highlight">💰 Total Profit: ${formatCoins(totalCoins)} ${priceNote}</p>
+        <hr style="border-color: #4a4a4a; margin: 1rem 0;">
+        <h4>Sell Options</h4>
+        <p><strong>Raw Bazaar sell:</strong> ${formatCoins(sellAnalysis.rawCoins)}</p>
+        <p><strong>Enchanted sell:</strong> ${sellAnalysis.enchantedCoins === null ? '<span style="color:#999;">Not available (no enchanted price)</span>' : formatCoins(sellAnalysis.enchantedCoins)}</p>
+        <p><strong>NPC (estimate):</strong> ${sellAnalysis.npcCoins === null ? '<span style="color:#999;">Estimate unavailable</span>' : formatCoins(sellAnalysis.npcCoins) + ` (≈ ${formatCoins(sellAnalysis.npcPer)} per item)`}</p>
+        <p style="margin-top:0.5rem;"><strong>Recommended:</strong> ${sellAnalysis.best.method} — ${formatCoins(sellAnalysis.best.coins)}</p>
         <p class="highlight">✨ Total Farming XP: ${totalXP.toLocaleString()} XP</p>
         <p style="color: #999; font-size: 0.9rem; margin-top: 1rem;">
             💵 Coins per hour: ${formatCoins(totalCoins / (farmTime / 60))}<br>
