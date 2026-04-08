@@ -303,9 +303,34 @@
                                 <label for="gh-farming-fortune">☘️ Farming Fortune:</label>
                                 <input class="styled-input" type="number" id="gh-farming-fortune" value="100" min="0" oninput="updateMutationHarvestResults()">
                             </div>
-                            <div class="calc-col">
-                                <label for="gh-crop-fortune">🎯 Crop Fortune:</label>
-                                <input class="styled-input" type="number" id="gh-crop-fortune" value="0" min="0" oninput="updateMutationHarvestResults()">
+                        </div>
+
+                        <div class="calc-row">
+                            <div class="calc-col full-width">
+                                <label>🎯 Crop Fortunes:</label>
+                                <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:flex-end;">
+                                    <select id="gh-crop-fortune-crop-select" class="styled-select" style="flex:1; min-width:160px;">
+                                        <option value="">Select crop</option>
+                                        <option value="WHEAT">Wheat</option>
+                                        <option value="CARROT_ITEM">Carrot</option>
+                                        <option value="POTATO_ITEM">Potato</option>
+                                        <option value="PUMPKIN">Pumpkin</option>
+                                        <option value="MELON">Melon</option>
+                                        <option value="COCOA_BEANS">Cocoa Beans</option>
+                                        <option value="SUGAR_CANE">Sugar Cane</option>
+                                        <option value="NETHER_STALK">Nether Wart</option>
+                                        <option value="CACTUS">Cactus</option>
+                                        <option value="MUSHROOM_COLLECTION">Mushroom</option>
+                                        <option value="WILD_ROSE">Wild Rose</option>
+                                        <option value="MOONFLOWER">Moonflower</option>
+                                        <option value="SUNFLOWER">Sunflower</option>
+                                    </select>
+                                    <input class="styled-input" type="number" id="gh-crop-fortune-value" value="100" min="0" step="0.1" placeholder="Fortune %" style="width:140px;">
+                                    <button onclick="addGhCropFortuneEntry()" style="background: var(--mint); color: var(--bg-dark); border: none; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 700;">+ Add</button>
+                                </div>
+                                <div id="gh-crop-fortune-list" style="margin-top:0.75rem; padding:0.75rem; background:#141A1F; border:1px solid #0F1317; border-radius:8px; min-height:3rem; color:#888;">
+                                    No crop fortunes added yet.
+                                </div>
                             </div>
                         </div>
 

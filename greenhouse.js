@@ -441,6 +441,7 @@ function initGreenhouse() {
         displayGreenhouseMutations();
         populateGreenhouseMutationSelect();
         populateMutationHarvestSelect();
+        updateGhCropFortuneList();
     }
 }
 
@@ -579,12 +580,61 @@ function updateGreenhouseCalc() {
 
 let mutationHarvest = {}; // { mutationId_harvests: { mutationId, harvests }, ... }
 
+let ghCropFortunes = {};
+
 function populateMutationHarvestSelect() {
     const select = document.getElementById('gh-mutation-select');
     if (!select) return;
     
     // This select is already populated by populateGreenhouseMutationSelect()
     // Just ensure it has the right ID - it should
+}
+
+function addGhCropFortuneEntry() {
+    const cropSelect = document.getElementById('gh-crop-fortune-crop-select');
+    const fortuneInput = document.getElementById('gh-crop-fortune-value');
+    const cropId = cropSelect.value;
+    const fortuneValue = parseFloat(fortuneInput.value) || 0;
+
+    if (!cropId) {
+        alert('Please choose a crop to add fortune for.');
+        return;
+    }
+    if (fortuneValue <= 0) {
+        alert('Please enter a crop fortune percent above 0.');
+        return;
+    }
+
+    ghCropFortunes[cropId] = fortuneValue;
+    cropSelect.value = '';
+    fortuneInput.value = '100';
+    updateGhCropFortuneList();
+    updateMutationHarvestResults();
+}
+
+function removeGhCropFortuneEntry(cropId) {
+    delete ghCropFortunes[cropId];
+    updateGhCropFortuneList();
+    updateMutationHarvestResults();
+}
+
+function updateGhCropFortuneList() {
+    const list = document.getElementById('gh-crop-fortune-list');
+    if (!list) return;
+
+    const entries = Object.entries(ghCropFortunes);
+    if (entries.length === 0) {
+        list.innerHTML = 'No crop fortunes added yet.';
+        return;
+    }
+
+    list.innerHTML = entries.map(([cropId, value]) => {
+        const cropName = GARDEN_CROPS[cropId] || cropId;
+        return `<div style="display:flex; justify-content:space-between; align-items:center; gap:0.75rem; padding:0.35rem 0; border-bottom:1px solid #0F1317;">
+            <span style="color:#D7FFF2;">${cropName}: ${value}%</span>
+            <button onclick="removeGhCropFortuneEntry('${cropId}')" style="background:#FF4444; color:white; border:none; border-radius:6px; padding:0.35rem 0.75rem; cursor:pointer;">Remove</button>
+        </div>`;
+    }).join('');
 }
 
 function addMutationToHarvest() {
@@ -657,7 +707,6 @@ function updateMutationHarvestResults() {
     const anitaBonus = document.getElementById('gh-anita-bonus').checked;
     const derpy = document.getElementById('gh-derpy').checked;
     const farmingFortune = parseInt(document.getElementById('gh-farming-fortune').value) || 0;
-    const cropFortune = parseInt(document.getElementById('gh-crop-fortune').value) || 0;
     const chipYield = parseInt(document.getElementById('gh-chip-yield').value) || 0;
     const gardenUpgrade = parseInt(document.getElementById('gh-garden-upgrade').value) || 0;
     
@@ -668,10 +717,8 @@ function updateMutationHarvestResults() {
     const cropBreakdown = {};
     
     const fortuneMult = 1 + (farmingFortune / 100);
-    const cropFortuneMult = 1 + (cropFortune / 100);
     const chipYieldMult = 1 + (chipYield / 100);
     const gardenUpgradeMult = 1 + (gardenUpgrade / 100);
-    const totalYieldMult = fortuneMult * cropFortuneMult * chipYieldMult * gardenUpgradeMult;
     
     for (const [key, data] of Object.entries(mutationHarvest)) {
         const mutation = MUTATIONS[data.mutationId];
@@ -680,7 +727,9 @@ function updateMutationHarvestResults() {
         for (const [cropId, baseAmount] of Object.entries(mutation.baseDrop)) {
             const npcPrice = NPC_SELL_PRICES[cropId] || 0;
             const xpRate = MUTATION_XP_RATES[cropId] || 1;
-            const cropsPerHarvest = baseAmount * totalYieldMult;
+            const cropFortune = ghCropFortunes[cropId] || 0;
+            const fortuneMultForCrop = 1 + ((farmingFortune + cropFortune) / 100);
+            const cropsPerHarvest = baseAmount * fortuneMultForCrop * chipYieldMult * gardenUpgradeMult;
             const totalCropsFromThisCrop = cropsPerHarvest * data.harvests;
             const coinsFromThisMutation = cropsPerHarvest * npcPrice * data.harvests;
             const totalXPThisCrop = cropsPerHarvest * xpRate * data.harvests;

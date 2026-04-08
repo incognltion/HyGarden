@@ -168,15 +168,64 @@ function formatNumber(num) {
 // CROP INFO UPDATE
 // =====================================================
 
+let savedCropFortunes = {};
+
 function updateCropInfo() {
     const cropId = document.getElementById('crop-select').value;
     const baseDrop = BASE_DROPS[cropId] || 1;
     const cropName = GARDEN_CROPS[cropId];
+    const activeCropFortune = savedCropFortunes[cropId] || 0;
     
     const infoBox = document.getElementById('crop-base-info');
     if (infoBox) {
-        infoBox.textContent = `🌱 ${cropName} base drop: ${baseDrop} per block`;
+        infoBox.textContent = `🌱 ${cropName} base drop: ${baseDrop} per block` + (activeCropFortune ? ` · Active ${activeCropFortune}% ${cropName} Fortune` : '');
     }
+}
+
+function addCropFortuneEntry() {
+    const cropSelect = document.getElementById('crop-fortune-crop-select');
+    const fortuneInput = document.getElementById('crop-fortune-value');
+    const cropId = cropSelect.value;
+    const fortuneValue = parseFloat(fortuneInput.value) || 0;
+
+    if (!cropId) {
+        alert('Please select a crop to add fortune for.');
+        return;
+    }
+    if (fortuneValue <= 0) {
+        alert('Please enter a crop fortune value greater than 0.');
+        return;
+    }
+
+    savedCropFortunes[cropId] = fortuneValue;
+    cropSelect.value = '';
+    fortuneInput.value = '100';
+    updateCropFortuneList();
+    updateCropInfo();
+}
+
+function removeCropFortuneEntry(cropId) {
+    delete savedCropFortunes[cropId];
+    updateCropFortuneList();
+    updateCropInfo();
+}
+
+function updateCropFortuneList() {
+    const list = document.getElementById('crop-fortune-list');
+    if (!list) return;
+    const entries = Object.entries(savedCropFortunes);
+    if (entries.length === 0) {
+        list.innerHTML = 'No crop fortunes added yet.';
+        return;
+    }
+
+    list.innerHTML = entries.map(([cropId, value]) => {
+        const cropName = GARDEN_CROPS[cropId] || cropId;
+        return `<div style="display:flex; justify-content:space-between; align-items:center; gap:0.75rem; padding:0.35rem 0; border-bottom:1px solid #0F1317;">
+            <span style="color:#D7FFF2;">${cropName}: ${value}%</span>
+            <button onclick="removeCropFortuneEntry('${cropId}')" style="background:#FF4444; color:#fff; border:none; border-radius:6px; padding:0.35rem 0.7rem; cursor:pointer;">Remove</button>
+        </div>`;
+    }).join('');
 }
 
 // =====================================================
@@ -479,7 +528,6 @@ function calculateProfit() {
     const farmTime = parseInt(document.getElementById('farm-time')?.value) || 60;
     const breakSpeed = parseFloat(document.getElementById('break-speed')?.value) || 20;
     const farmingFortune = parseFloat(document.getElementById('farming-fortune')?.value) || 0;
-    const cropFortune = parseFloat(document.getElementById('crop-fortune')?.value) || 0;
     const farmingWisdom = parseFloat(document.getElementById('farming-wisdom')?.value) || 0;
     
     const anitaBonus = document.getElementById('anita-bonus')?.checked ? 1.10 : 1.0;
@@ -495,6 +543,7 @@ function calculateProfit() {
     }
     
     const baseDrop = BASE_DROPS[cropId] || 1;
+    const cropFortune = savedCropFortunes[cropId] || 0;
     const totalFortune = farmingFortune + cropFortune + getPetFortune(cropId);
     const fortuneMultiplier = 1 + (totalFortune / 100);
     const dropsPerBlock = baseDrop * fortuneMultiplier * anitaBonus;
@@ -620,6 +669,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadPriceHistory();
     fetchBazaarData();
     updateCropInfo();
+    updateCropFortuneList();
 });
 
 setInterval(fetchBazaarData, 60000);
