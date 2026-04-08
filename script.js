@@ -132,8 +132,6 @@ const ELEPHANT_FORTUNE_MULT = {
     'mythic': 0.27,
 };
 
-let bazaarData = {};
-let priceHistory = {};
 let currentChart = null;
 let activePet = null;
 
@@ -244,58 +242,6 @@ function getPetFortune(cropId) {
 }
 
 // =====================================================
-// API FUNCTIONS
-// =====================================================
-
-async function fetchBazaarData() {
-    try {
-        const response = await fetch('https://api.hypixel.net/v2/skyblock/bazaar');
-        const data = await response.json();
-
-        if (data.success) {
-            bazaarData = data.products;
-            storePriceHistory();
-            displayPrices();
-            updateCropInfoPrices();
-            document.getElementById('loading').style.display = 'none';
-        } else {
-            document.getElementById('loading').textContent = 'Failed to load. Refresh page.';
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('loading').textContent = 'API error. Try refreshing.';
-    }
-}
-
-function storePriceHistory() {
-    const timestamp = Date.now();
-    const sevenDaysAgo = timestamp - (7 * 24 * 60 * 60 * 1000);
-    
-    for (const itemId of Object.keys({...GARDEN_CROPS, ...EXTRA_ITEMS})) {
-        if (bazaarData[itemId]) {
-            if (!priceHistory[itemId]) priceHistory[itemId] = [];
-            
-            priceHistory[itemId].push({
-                time: timestamp,
-                sellPrice: bazaarData[itemId].quick_status.sellPrice,
-                buyPrice: bazaarData[itemId].quick_status.buyPrice
-            });
-            
-            priceHistory[itemId] = priceHistory[itemId].filter(p => p.time > sevenDaysAgo);
-        }
-    }
-    
-    try { localStorage.setItem('priceHistory', JSON.stringify(priceHistory)); } catch (e) {}
-}
-
-function loadPriceHistory() {
-    try {
-        const stored = localStorage.getItem('priceHistory');
-        if (stored) priceHistory = JSON.parse(stored);
-    } catch (e) {}
-}
-
-// =====================================================
 // DISPLAY FUNCTIONS
 // =====================================================
 
@@ -361,7 +307,7 @@ function renderPriceChart(itemId) {
     if (history.length < 2) {
         const now = Date.now();
         const basePrice = bazaarData[itemId]?.quick_status.sellPrice || 100;
-        for (let i = 7; i >= 0; i--) {
+        for (let i = 10; i >= 0; i--) {
             history.push({
                 time: now - (i * 24 * 60 * 60 * 1000),
                 sellPrice: basePrice * (0.9 + Math.random() * 0.2),

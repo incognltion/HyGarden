@@ -50,6 +50,42 @@ header p {
     margin-top: 0.5rem;
 }
 
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 1rem auto;
+    padding: 0 1rem;
+    flex-wrap: wrap;
+}
+
+.tab-button {
+    background: #141A1F;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    padding: 0.9rem 1.3rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.tab-button.active,
+.tab-button:hover {
+    background: rgba(165, 240, 214, 0.08);
+    border-color: var(--mint);
+    color: var(--text-primary);
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
 /* Main */
 main {
     max-width: 1400px;

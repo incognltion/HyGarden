@@ -13,9 +13,15 @@
         <p>Live crop prices & farming calculator for Hypixel SkyBlock</p>
     </header>
 
+    <div class="tabs">
+        <button class="tab-button active" data-tab="graphs">Graphs</button>
+        <button class="tab-button" data-tab="calculator">Farm Calculator</button>
+        <button class="tab-button" data-tab="reference">Reference</button>
+    </div>
+
     <main>
         <!-- Price Dashboard -->
-        <section id="prices-section">
+        <section id="prices-section" class="tab-panel active" data-tab="graphs">
             <h2>💰 Live Bazaar Prices</h2>
             <div id="loading">Loading prices...</div>
             <div id="prices-grid" class="prices-grid"></div>
@@ -32,8 +38,8 @@
         </div>
 
         <!-- Profit Calculator -->
-        <section id="calculator">
-            <h2>📊 Farming Profit Calculator</h2>
+        <section id="calculator" class="tab-panel" data-tab="calculator">
+            <h2>Farm Calculator</h2>
             <div class="calculator-box">
                 
                 <!-- Crop Selection -->
@@ -171,7 +177,7 @@
         </section>
 
         <!-- Crop Info Section -->
-        <section id="crop-info">
+        <section id="crop-info" class="tab-panel" data-tab="reference">
             <h2>🌾 Crop Reference</h2>
             <div class="crop-cards">
                 <div class="crop-card">
@@ -255,6 +261,11 @@
         <p>Made with 🌿 for SkyBlock farmers</p>
     </footer>
 
+    <script src="data.js"></script>
     <script src="script.js"></script>
+    <script src="tabs.js"></script>
+    <script src="graphs.js"></script>
+    <script src="calculator.js"></script>
+    <script src="reference.js"></script>
 </body>
 </html>
