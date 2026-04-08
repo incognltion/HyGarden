@@ -57,13 +57,13 @@ const NPC_SELL_PRICES = {
 // This is what the game uses as the base for fortune calculation
 const BASE_DROPS_PER_BLOCK = {
     'WHEAT': 1,
-    'CARROT_ITEM': 1,
-    'POTATO_ITEM': 1,
+    'CARROT_ITEM': 3,
+    'POTATO_ITEM': 3,
     'PUMPKIN': 1,
-    'MELON': 1,
-    'COCOA_BEANS': 1,
+    'MELON': 4,
+    'COCOA_BEANS': 2.5,
     'SUGAR_CANE': 1,
-    'NETHER_STALK': 1,
+    'NETHER_STALK': 2.5,
     'CACTUS': 1,
     'MUSHROOM_COLLECTION': 1,
 };
