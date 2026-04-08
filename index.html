@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyBlock Garden Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🌿 SkyBlock Garden Hub</h1>
+        <p>Live crop prices & gardening info for Hypixel SkyBlock</p>
+    </header>
+
+    <main>
+        <!-- Price Dashboard -->
+        <section id="prices-section">
+            <h2>💰 Live Bazaar Crop Prices</h2>
+            <div id="loading">Loading prices...</div>
+            <div id="prices-grid" class="prices-grid"></div>
+        </section>
+
+        <!-- Crop Info Section -->
+        <section id="crop-info">
+            <h2>🌾 Crop Farming Info</h2>
+            <div class="crop-cards">
+                <div class="crop-card">
+                    <h3>🥕 Carrot</h3>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> Yes (with replenish enchant)</p>
+                    <p class="price-tag" id="info-CARROT_ITEM">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <h3>🥔 Potato</h3>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> Yes</p>
+                    <p class="price-tag" id="info-POTATO_ITEM">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <h3>🌾 Wheat</h3>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> Yes</p>
+                    <p class="price-tag" id="info-WHEAT">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <h3>🎃 Pumpkin</h3>
+                    <p><strong>XP per harvest:</strong> 4.5</p>
+                    <p><strong>Replenish:</strong> No</p>
+                    <p class="price-tag" id="info-PUMPKIN">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <h3>🍈 Melon</h3>
+                    <p><strong>XP per harvest:</strong> 4.5</p>
+                    <p><strong>Replenish:</strong> No</p>
+                    <p class="price-tag" id="info-MELON">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <h3>🍫 Cocoa Beans</h3>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> Yes</p>
+                    <p class="price-tag" id="info-COCOA_BEANS">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <h3>🌿 Sugar Cane</h3>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> No</p>
+                    <p class="price-tag" id="info-SUGAR_CANE">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <h3>🍄 Nether Wart</h3>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> Yes</p>
+                    <p class="price-tag" id="info-NETHER_STALK">Loading...</p>
+                </div>
+                <div class="crop-card">
+                    <h3>🌵 Cactus</h3>
+                    <p><strong>XP per harvest:</strong> 4</p>
+                    <p><strong>Replenish:</strong> No</p>
+                    <p class="price-tag" id="info-CACTUS">Loading...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profit Calculator -->
+        <section id="calculator">
+            <h2>📊 Simple Profit Calculator</h2>
+            <div class="calculator-box">
+                <label for="crop-select">Select Crop:</label>
+                <select id="crop-select">
+                    <option value="CARROT_ITEM">Carrot</option>
+                    <option value="POTATO_ITEM">Potato</option>
+                    <option value="WHEAT">Wheat</option>
+                    <option value="PUMPKIN">Pumpkin</option>
+                    <option value="MELON">Melon</option>
+                    <option value="COCOA_BEANS">Cocoa Beans</option>
+                    <option value="SUGAR_CANE">Sugar Cane</option>
+                    <option value="NETHER_STALK">Nether Wart</option>
+                    <option value="CACTUS">Cactus</option>
+                </select>
+
+                <label for="amount">Amount of items:</label>
+                <input type="number" id="amount" value="71680" placeholder="e.g., 71680 (full inv)">
+
+                <button onclick="calculateProfit()">Calculate</button>
+
+                <div id="calc-result" class="calc-result"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Prices fetched from the <a href="https://api.hypixel.net/" target="_blank">Hypixel API</a> via Bazaar data</p>
+        <p>Made with 🌱 for SkyBlock farmers</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
