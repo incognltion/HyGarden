@@ -13,6 +13,9 @@ const GARDEN_CROPS = {
     'NETHER_STALK': 'Nether Wart',
     'CACTUS': 'Cactus',
     'MUSHROOM_COLLECTION': 'Mushroom',
+    'WILD_ROSE': 'Wild Rose',
+    'MOONFLOWER': 'Moonflower',
+    'SUNFLOWER': 'Sunflower'
 };
 
 // NPC sell prices (from Hypixel Wiki)
@@ -28,6 +31,9 @@ const NPC_SELL_PRICES = {
     'NETHER_STALK': 3,
     'CACTUS': 1,
     'MUSHROOM_COLLECTION': 4,
+    'WILD_ROSE': 0,  // No NPC price
+    'MOONFLOWER': 0, // No NPC price
+    'SUNFLOWER': 0,  // No NPC price
     
     // Enchanted T1
     'ENCHANTED_WHEAT': 160,
@@ -304,12 +310,23 @@ function renderPriceChart(itemId) {
     
     let history = [...(priceHistory[itemId] || [])];
     
-    if (history.length < 2) {
+    // Generate 10 days of mock data if we have less than 10 data points
+    if (history.length < 10) {
         const now = Date.now();
         const basePrice = bazaarData[itemId]?.quick_status.sellPrice || 100;
-        for (let i = 10; i >= 0; i--) {
-            history.push({
-                time: now - (i * 24 * 60 * 60 * 1000),
+        const existingHistory = history.length > 0 ? history : [];
+        history = [];
+        
+        for (let i = 9; i >= 0; i--) {
+            const dayTime = now - (i * 24 * 60 * 60 * 1000);
+            // Check if we have real data for this time
+            const realData = existingHistory.find(p => {
+                const diff = Math.abs(p.time - dayTime);
+                return diff < 24 * 60 * 60 * 1000;
+            });
+            
+            history.push(realData || {
+                time: dayTime,
                 sellPrice: basePrice * (0.9 + Math.random() * 0.2),
                 buyPrice: basePrice * (1.1 + Math.random() * 0.2)
             });

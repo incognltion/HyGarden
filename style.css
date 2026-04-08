@@ -271,6 +271,95 @@ img {
     font-weight: bold;
 }
 
+/* ===================================================
+   GREENHOUSE MUTATIONS STYLES
+   =================================================== */
+
+.greenhouse-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.greenhouse-card {
+    background: #151A1F;
+    border: 2px solid #0F1317;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+}
+
+.greenhouse-card:hover {
+    border-color: var(--mint);
+    box-shadow: 0 0 20px var(--mint-glow);
+    transform: translateY(-2px);
+}
+
+.rarity-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 0.5rem;
+}
+
+.rarity-common {
+    background: #9DB3A8;
+    color: #0E1013;
+}
+
+.rarity-uncommon {
+    background: #3BA850;
+    color: #FFFFFF;
+}
+
+.rarity-rare {
+    background: #5EAFD9;
+    color: #FFFFFF;
+}
+
+.rarity-epic {
+    background: #BE6ED8;
+    color: #FFFFFF;
+}
+
+.rarity-legendary {
+    background: #FAB005;
+    color: #0E1013;
+}
+
+/* ===================================================
+   GREENHOUSE VIEW TOGGLE
+   =================================================== */
+
+.gh-view-button {
+    background: #141A1F;
+    border: 2px solid #0F1317;
+    color: var(--text-primary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.gh-view-button:hover {
+    border-color: var(--mint);
+    box-shadow: 0 0 15px var(--mint-glow);
+}
+
+.gh-view-button.active {
+    background: var(--mint);
+    color: var(--bg-dark);
+    border-color: var(--mint);
+    box-shadow: 0 0 20px var(--mint-glow);
+}
+
 /* Calculator */
 .calculator-box {
     background: #141A1F;
@@ -553,6 +642,74 @@ img {
     color: var(--mint-light);
     font-size: 0.95rem;
     font-weight: 500;
+}
+
+/* Styled Select Dropdown */
+.styled-select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    width: 100%;
+    padding: 0.7rem 2.5rem 0.7rem 0.7rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: linear-gradient(var(--bg-input), var(--bg-input)) padding-box,
+                linear-gradient(135deg, var(--mint), var(--mint-dark)) border-box;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--bg-input);
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23A5F0D6" d="M6 9L1 4h10z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    padding-right: 2.5rem;
+}
+
+.styled-select:hover {
+    border-color: var(--mint);
+    box-shadow: 0 0 8px var(--mint-glow);
+}
+
+.styled-select:focus {
+    outline: none;
+    border-color: var(--mint);
+    box-shadow: 0 0 12px var(--mint-glow);
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23D7FFF2" d="M6 9L1 4h10z"/></svg>');
+}
+
+.styled-select option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    padding: 0.5rem;
+}
+
+.styled-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.styled-input:focus {
+    outline: none;
+    border-color: var(--mint);
+    box-shadow: 0 0 10px var(--mint-glow);
+}
+
+#gh-best-coin-crop {
+    transition: opacity 0.2s ease;
+}
+
+#gh-best-coin-crop strong {
+    color: var(--mint);
+}
+
 }
 
 .best-profit-box .method-detail {

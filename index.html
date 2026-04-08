@@ -17,6 +17,7 @@
         <button class="tab-button active" data-tab="graphs">Graphs</button>
         <button class="tab-button" data-tab="calculator">Farm Calculator</button>
         <button class="tab-button" data-tab="reference">Reference</button>
+        <button class="tab-button" data-tab="greenhouse">Greenhouse</button>
     </div>
 
     <main>
@@ -254,6 +255,130 @@
                 </div>
             </div>
         </section>
+
+        <!-- Greenhouse Mutations -->
+        <section id="greenhouse-section" class="tab-panel" data-tab="greenhouse">
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #2A2A2A; padding-bottom: 1rem;">
+                <button id="gh-view-toggle-list" class="gh-view-button active" onclick="toggleGreenhouseView('list')">📊 Mutations List</button>
+                <button id="gh-view-toggle-calc" class="gh-view-button" onclick="toggleGreenhouseView('calculator')">🧮 Harvest Calculator</button>
+            </div>
+
+            <!-- Mutations List View -->
+            <div id="gh-view-list">
+                <h2>🌱 Greenhouse Mutations</h2>
+                <p style="color: #888; margin-bottom: 1rem;">All mutations ranked by NPC profit per harvest (no farming fortune)</p>
+                <div id="greenhouse-grid" class="greenhouse-grid"></div>
+            </div>
+
+            <!-- Greenhouse Calculator View -->
+            <div id="gh-view-calculator" style="display: none;">
+                <h2>🧮 Harvest Calculator</h2>
+                <div style="max-width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <!-- Input Section -->
+                    <div>
+                        <h3 style="margin-top: 0; border-bottom: 1px solid #2A2A2A; padding-bottom: 0.5rem;">➕ Add Mutations</h3>
+                        
+                        <div class="calc-row">
+                            <div class="calc-col" style="width: 100%;">
+                                <label for="gh-mutation-select">🌱 Select Mutation:</label>
+                                <select id="gh-mutation-select" class="styled-select">
+                                    <option value="">-- Choose a Mutation --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="calc-row">
+                            <div class="calc-col">
+                                <label for="gh-harvests">📊 Harvests:</label>
+                                <input type="number" id="gh-harvests" value="1" min="1">
+                            </div>
+                            <div style="display: flex; align-items: flex-end;">
+                                <button onclick="addMutationToHarvest()" style="background: var(--mint); color: var(--bg-dark); border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 700; flex: 1;">+ Add</button>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem; border-bottom: 1px solid #2A2A2A; padding-bottom: 0.5rem;">📈 Farm Multipliers</h3>
+                        <div class="calc-row">
+                            <div class="calc-col">
+                                <label for="gh-farming-fortune">☘️ Farming Fortune:</label>
+                                <input class="styled-input" type="number" id="gh-farming-fortune" value="100" min="0" oninput="updateMutationHarvestResults()">
+                            </div>
+                            <div class="calc-col">
+                                <label for="gh-crop-fortune">🎯 Crop Fortune:</label>
+                                <input class="styled-input" type="number" id="gh-crop-fortune" value="0" min="0" oninput="updateMutationHarvestResults()">
+                            </div>
+                        </div>
+
+                        <div class="calc-row">
+                            <div class="calc-col">
+                                <label for="gh-chip-yield">🔧 Chip Yield %:</label>
+                                <input class="styled-input" type="number" id="gh-chip-yield" value="0" min="0" max="100" oninput="updateMutationHarvestResults()">
+                            </div>
+                            <div class="calc-col">
+                                <label for="gh-garden-upgrade">🏡 Garden Upgrade %:</label>
+                                <input class="styled-input" type="number" id="gh-garden-upgrade" value="0" min="0" max="100" oninput="updateMutationHarvestResults()">
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top: 1.5rem; border-bottom: 1px solid #2A2A2A; padding-bottom: 0.5rem;">📋 Harvest List</h3>
+                        <div id="gh-harvest-list" style="border: 1px solid #0F1317; border-radius: 8px; max-height: 400px; overflow-y: auto; background: #141A1F;">
+                            <div style="padding: 1rem; color: #888; text-align: center;">No mutations added yet</div>
+                        </div>
+
+                        <button onclick="clearMutationHarvest()" style="background: #FF4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; margin-top: 1rem; width: 100%;">🗑️ Clear All</button>
+
+                        <h3 style="margin-top: 1.5rem; border-bottom: 1px solid #2A2A2A; padding-bottom: 0.5rem;">⚙️ Bonuses</h3>
+                        <div style="padding: 1rem; background: #141A1F; border-radius: 8px; border: 1px solid #0F1317;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="gh-anita-bonus" onchange="updateMutationHarvestResults()">
+                                <span>🌸 Anita Bonus (+10%)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-top: 0.5rem;">
+                                <input type="checkbox" id="gh-derpy" onchange="updateMutationHarvestResults()">
+                                <span>🤪 Mayor Derpy (+25% XP)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div>
+                        <h3 style="margin-top: 0; border-bottom: 1px solid #2A2A2A; padding-bottom: 0.5rem;">📈 Total Results</h3>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="background: #1a1a1f; border: 1px solid #3a3a3f; border-radius: 8px; padding: 1rem;">
+                                <div style="font-size: 0.85rem; color: #888;">💰 Total Coins</div>
+                                <div id="gh-harvest-coins" style="font-size: 2rem; font-weight: bold; color: #A5F0D6; margin-top: 0.5rem;">0 coins</div>
+                            </div>
+
+                            <div style="background: #1a1a1f; border: 1px solid #3a3a3f; border-radius: 8px; padding: 1rem;">
+                                <div style="font-size: 0.85rem; color: #888;">✨ Farming XP</div>
+                                <div id="gh-harvest-xp" style="font-size: 2rem; font-weight: bold; color: #FFD700; margin-top: 0.5rem;">0 XP</div>
+                            </div>
+
+                            <div style="background: #1a1a1f; border: 1px solid #3a3a3f; border-radius: 8px; padding: 1rem;">
+                                <div style="font-size: 0.85rem; color: #888;">🐾 Pet XP</div>
+                                <div id="gh-harvest-pet-xp" style="font-size: 2rem; font-weight: bold; color: #FF7A7A; margin-top: 0.5rem;">0 PXP</div>
+                            </div>
+
+                            <div style="background: #1a1a1f; border: 1px solid #3a3a3f; border-radius: 8px; padding: 1rem;">
+                                <div style="font-size: 0.85rem; color: #888;">🌾 Total Crops</div>
+                                <div id="gh-harvest-crops" style="font-size: 2rem; font-weight: bold; color: #61C9B1; margin-top: 0.5rem;">0</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: #141A1F; border-radius: 8px; border: 1px solid #0F1317;">
+                            <strong style="display: block; margin-bottom: 1rem;">📦 Crop Breakdown:</strong>
+                            <div id="gh-harvest-breakdown" style="font-size: 0.9rem; color: #B6BDC5; max-height: 300px; overflow-y: auto;"></div>
+                        </div>
+
+                        <div id="gh-best-coin-crop" style="margin-top: 1rem; padding: 0.9rem; background: #141A1F; border-radius: 8px; border: 1px solid #0F1317; color: var(--text-primary); font-size: 0.95rem; display: none;">
+                            <strong>💎 Best Money Source:</strong>
+                            <div id="gh-best-coin-text" style="margin-top: 0.5rem; color: var(--mint-light);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -267,5 +392,6 @@
     <script src="graphs.js"></script>
     <script src="calculator.js"></script>
     <script src="reference.js"></script>
+    <script src="greenhouse.js"></script>
 </body>
 </html>

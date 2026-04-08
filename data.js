@@ -13,6 +13,7 @@ async function fetchBazaarData() {
             // Display updates are handled in script.js
             if (typeof displayPrices === 'function') displayPrices();
             if (typeof updateCropInfoPrices === 'function') updateCropInfoPrices();
+            if (typeof initGreenhouse === 'function') initGreenhouse();
             const loading = document.getElementById('loading');
             if (loading) loading.style.display = 'none';
         } else {
