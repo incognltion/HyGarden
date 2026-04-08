@@ -346,8 +346,15 @@ function renderPriceChart(itemId) {
     const canvas = document.getElementById('price-chart');
     if (!canvas) return;
     
-    const ctx = canvas.getContext('2d');
-    if (currentChart) currentChart.destroy();
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js is not loaded.');
+        return;
+    }
+    
+    if (currentChart) {
+        currentChart.destroy();
+        currentChart = null;
+    }
     
     let history = [...(priceHistory[itemId] || [])];
     
@@ -363,7 +370,7 @@ function renderPriceChart(itemId) {
         }
     }
     
-    currentChart = new Chart(ctx, {
+    currentChart = new Chart(canvas, {
         type: 'line',
         data: {
             labels: history.map(p => new Date(p.time).toLocaleDateString()),
