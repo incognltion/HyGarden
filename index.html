@@ -33,12 +33,10 @@
 
         <!-- Advanced Profit Calculator -->
         <section id="calculator">
-            <h2>📊 Advanced Profit Calculator</h2>
+            <h2>📊 Farming Profit Calculator</h2>
             <div class="calculator-box">
+                
                 <!-- Crop Selection -->
-                <div class="calc-section-header">
-                    <h3>🌾 Crop Selection</h3>
-                </div>
                 <div class="calc-row">
                     <div class="calc-col">
                         <label for="crop-select">Select Crop:</label>
@@ -60,129 +58,106 @@
                 <!-- Fortune Stats -->
                 <div class="calc-section-header">
                     <h3>🍀 Fortune Stats</h3>
+                    <span class="section-hint">Check these values in your SkyBlock menu</span>
                 </div>
                 
                 <div class="calc-row">
                     <div class="calc-col">
-                        <label for="base-fortune">Base Farming Fortune:</label>
-                        <input type="number" id="base-fortune" value="100" min="0" max="2000">
-                        <span class="input-hint">From farming level, bestiary, community upgrades</span>
+                        <label for="farming-fortune">Overall Farming Fortune:</label>
+                        <input type="number" id="farming-fortune" value="500" min="0" max="3000">
+                        <span class="input-hint">Includes hoe, armor, pet, garden level, etc.</span>
                     </div>
                     <div class="calc-col">
-                        <label for="tool-fortune">Tool Fortune:</label>
-                        <input type="number" id="tool-fortune" value="100" min="0" max="500">
-                        <span class="input-hint">Farming for Dummies, reforge, counter</span>
-                    </div>
-                </div>
-
-                <div class="calc-row">
-                    <div class="calc-col">
-                        <label for="armor-fortune">Armor Fortune:</label>
-                        <input type="number" id="armor-fortune" value="0" min="0" max="500">
-                        <span class="input-hint">Rancher's, Fermento, Squash set</span>
-                    </div>
-                    <div class="calc-col">
-                        <label for="pet-fortune">Pet Fortune:</label>
-                        <input type="number" id="pet-fortune" value="0" min="0" max="200">
-                        <span class="input-hint">Elephant, Mooshroom Cow, Bee</span>
+                        <label for="crop-fortune">Crop-Specific Fortune:</label>
+                        <input type="number" id="crop-fortune" value="200" min="0" max="1000">
+                        <span class="input-hint">Turbo enchant, crop upgrades, dedication, etc.</span>
                     </div>
                 </div>
 
                 <div class="calc-row">
                     <div class="calc-col">
-                        <label for="turbo-level">Turbo Enchant Level (0-5):</label>
-                        <input type="number" id="turbo-level" value="5" min="0" max="5">
-                        <span class="input-hint">+5 crop fortune per level</span>
-                    </div>
-                    <div class="calc-col">
-                        <label for="harvesting-level">Harvesting Level (0-6):</label>
-                        <input type="number" id="harvesting-level" value="6" min="0" max="6">
-                        <span class="input-hint">+12.5 fortune per level</span>
-                    </div>
-                </div>
-
-                <div class="calc-row">
-                    <div class="calc-col">
-                        <label for="cultivating-count">Cultivating Counter:</label>
-                        <input type="number" id="cultivating-count" value="0" min="0">
-                        <span class="input-hint">Crops broken on tool (for fortune bonus)</span>
-                    </div>
-                    <div class="calc-col">
-                        <label for="dedication-level">Dedication Level (0-4):</label>
-                        <input type="number" id="dedication-level" value="0" min="0" max="4">
-                        <span class="input-hint">Requires milestone progress</span>
-                    </div>
-                </div>
-
-                <div class="calc-row">
-                    <div class="calc-col">
-                        <label for="garden-level">Garden Level (1-15):</label>
-                        <input type="number" id="garden-level" value="15" min="1" max="15">
-                        <span class="input-hint">~4 fortune per level</span>
-                    </div>
-                    <div class="calc-col">
-                        <label for="crop-upgrade">Crop Upgrade Level (0-9):</label>
-                        <input type="number" id="crop-upgrade" value="9" min="0" max="9">
-                        <span class="input-hint">+5 fortune per level (crop specific)</span>
-                    </div>
-                </div>
-
-                <div class="calc-row">
-                    <div class="calc-col">
-                        <label for="plot-bonus">Plot Fortune Bonus:</label>
-                        <input type="number" id="plot-bonus" value="0" min="0" max="100">
-                        <span class="input-hint">From visitors and plot upgrades</span>
-                    </div>
-                    <div class="calc-col">
-                        <label for="extra-fortune">Extra Fortune (Other):</label>
-                        <input type="number" id="extra-fortune" value="0" min="0" max="500">
-                        <span class="input-hint">Cake buffs, century cakes, etc.</span>
+                        <label for="farming-wisdom">Farming Wisdom:</label>
+                        <input type="number" id="farming-wisdom" value="0" min="0" max="500">
+                        <span class="input-hint">Increases farming XP gained</span>
                     </div>
                 </div>
 
                 <!-- Farming Speed -->
                 <div class="calc-section-header">
-                    <h3>⚡ Farming Speed</h3>
+                    <h3>⚡ Farming Setup</h3>
                 </div>
                 
                 <div class="calc-row">
                     <div class="calc-col">
                         <label for="break-speed">Blocks Per Second:</label>
-                        <input type="number" id="break-speed" value="20" min="1" max="50" step="0.1">
-                        <span class="input-hint">Typical: 15-25 BPS depending on setup</span>
+                        <input type="number" id="break-speed" value="20" min="1" max="50" step="0.5">
+                        <span class="input-hint">Typical: 15-20 BPS</span>
                     </div>
                     <div class="calc-col">
                         <label for="farm-time">Farming Time (minutes):</label>
                         <input type="number" id="farm-time" value="60" min="1" max="600">
-                        <span class="input-hint">How long you plan to farm</span>
                     </div>
                 </div>
 
                 <!-- Bonuses -->
                 <div class="calc-section-header">
-                    <h3>✨ Bonuses & Perks</h3>
+                    <h3>✨ Bonuses</h3>
                 </div>
                 
                 <div class="checkbox-grid">
                     <label class="checkbox-label">
-                        <input type="checkbox" id="replenish" checked>
-                        <span>Replenish Enchant</span>
-                    </label>
-                    <label class="checkbox-label">
                         <input type="checkbox" id="anita-bonus">
-                        <span>Anita Bonus (+10% crops)</span>
+                        <span>Anita Bonus <span class="bonus-value">(+10% crops)</span></span>
                     </label>
                     <label class="checkbox-label">
-                        <input type="checkbox" id="mooshroom-bonus">
-                        <span>Mooshroom Cow Perk</span>
+                        <input type="checkbox" id="derpy-active">
+                        <span>Mayor Derpy <span class="bonus-value">(+50% XP, -50% coins)</span></span>
                     </label>
                     <label class="checkbox-label">
-                        <input type="checkbox" id="derpy-bonus">
-                        <span>Mayor Derpy (+50% farming XP)</span>
+                        <input type="checkbox" id="elephant-pet" onchange="togglePetOptions('elephant')">
+                        <span>Elephant Pet <span class="bonus-value">(+fortune per speed)</span></span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="mooshroom-pet" onchange="togglePetOptions('mooshroom')">
+                        <span>Mooshroom Cow <span class="bonus-value">(mushroom fortune)</span></span>
                     </label>
                 </div>
 
-                <button onclick="calculateAdvancedProfit()">🧮 Calculate Profit & XP</button>
+                <!-- Pet Options (hidden by default) -->
+                <div id="pet-options" class="pet-options" style="display: none;">
+                    <div class="calc-row">
+                        <div class="calc-col">
+                            <label for="pet-rarity">Pet Rarity:</label>
+                            <select id="pet-rarity" onchange="updatePetBonus()">
+                                <option value="common">Common</option>
+                                <option value="uncommon">Uncommon</option>
+                                <option value="rare">Rare</option>
+                                <option value="epic">Epic</option>
+                                <option value="legendary" selected>Legendary</option>
+                                <option value="mythic">Mythic</option>
+                            </select>
+                        </div>
+                        <div class="calc-col">
+                            <label for="pet-level">Pet Level:</label>
+                            <input type="number" id="pet-level" value="100" min="1" max="200" onchange="updatePetBonus()">
+                        </div>
+                    </div>
+                    <div id="pet-bonus-display" class="pet-bonus-display"></div>
+                </div>
+
+                <!-- Speed Bonus for Elephant -->
+                <div id="elephant-options" class="pet-options" style="display: none;">
+                    <div class="calc-row">
+                        <div class="calc-col">
+                            <label for="player-speed">Your Speed Stat:</label>
+                            <input type="number" id="player-speed" value="400" min="100" max="600">
+                            <span class="input-hint">Check in SkyBlock menu (default 100)</span>
+                        </div>
+                    </div>
+                    <div id="elephant-bonus-display" class="pet-bonus-display"></div>
+                </div>
+
+                <button onclick="calculateAdvancedProfit()">🧮 Calculate Profit</button>
 
                 <div id="calc-result" class="calc-result"></div>
             </div>
@@ -190,17 +165,22 @@
 
         <!-- Crop Info Section -->
         <section id="crop-info">
-            <h2>🌾 Crop Farming Reference</h2>
+            <h2>🌾 Crop Reference</h2>
             <div class="crop-cards">
+                <div class="crop-card">
+                    <div class="crop-card-header">
+                        <img src="https://sky.coflnet.com/static/icon/WHEAT" alt="Wheat" class="crop-icon">
+                        <h3>Wheat</h3>
+                    </div>
+                    <p><strong>XP:</strong> 4 · <strong>NPC:</strong> 1 coin</p>
+                    <p class="price-tag" id="info-WHEAT">Loading...</p>
+                </div>
                 <div class="crop-card">
                     <div class="crop-card-header">
                         <img src="https://sky.coflnet.com/static/icon/CARROT_ITEM" alt="Carrot" class="crop-icon">
                         <h3>Carrot</h3>
                     </div>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> Yes</p>
-                    <p><strong>Base drops:</strong> 1 (vanilla avg: 3.5)</p>
-                    <p><strong>NPC Price:</strong> 1 coin</p>
+                    <p><strong>XP:</strong> 4 · <strong>NPC:</strong> 1 coin</p>
                     <p class="price-tag" id="info-CARROT_ITEM">Loading...</p>
                 </div>
                 <div class="crop-card">
@@ -208,32 +188,15 @@
                         <img src="https://sky.coflnet.com/static/icon/POTATO_ITEM" alt="Potato" class="crop-icon">
                         <h3>Potato</h3>
                     </div>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> Yes</p>
-                    <p><strong>Base drops:</strong> 1 (vanilla avg: 3.5)</p>
-                    <p><strong>NPC Price:</strong> 1 coin</p>
+                    <p><strong>XP:</strong> 4 · <strong>NPC:</strong> 1 coin</p>
                     <p class="price-tag" id="info-POTATO_ITEM">Loading...</p>
-                </div>
-                <div class="crop-card">
-                    <div class="crop-card-header">
-                        <img src="https://sky.coflnet.com/static/icon/WHEAT" alt="Wheat" class="crop-icon">
-                        <h3>Wheat</h3>
-                    </div>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> Yes</p>
-                    <p><strong>Base drops:</strong> 1</p>
-                    <p><strong>NPC Price:</strong> 1 coin</p>
-                    <p class="price-tag" id="info-WHEAT">Loading...</p>
                 </div>
                 <div class="crop-card">
                     <div class="crop-card-header">
                         <img src="https://sky.coflnet.com/static/icon/PUMPKIN" alt="Pumpkin" class="crop-icon">
                         <h3>Pumpkin</h3>
                     </div>
-                    <p><strong>XP per harvest:</strong> 4.5</p>
-                    <p><strong>Replenish:</strong> No</p>
-                    <p><strong>Base drops:</strong> 1</p>
-                    <p><strong>NPC Price:</strong> 4 coins</p>
+                    <p><strong>XP:</strong> 4.5 · <strong>NPC:</strong> 4 coins</p>
                     <p class="price-tag" id="info-PUMPKIN">Loading...</p>
                 </div>
                 <div class="crop-card">
@@ -241,10 +204,7 @@
                         <img src="https://sky.coflnet.com/static/icon/MELON" alt="Melon" class="crop-icon">
                         <h3>Melon</h3>
                     </div>
-                    <p><strong>XP per harvest:</strong> 4.5</p>
-                    <p><strong>Replenish:</strong> No</p>
-                    <p><strong>Base drops:</strong> 5 (avg slices)</p>
-                    <p><strong>NPC Price:</strong> 0.5 coins</p>
+                    <p><strong>XP:</strong> 4.5 · <strong>NPC:</strong> 0.5 coins</p>
                     <p class="price-tag" id="info-MELON">Loading...</p>
                 </div>
                 <div class="crop-card">
@@ -252,10 +212,7 @@
                         <img src="https://sky.coflnet.com/static/icon/COCOA_BEANS" alt="Cocoa Beans" class="crop-icon">
                         <h3>Cocoa Beans</h3>
                     </div>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> Yes</p>
-                    <p><strong>Base drops:</strong> 1 (vanilla avg: 2.5)</p>
-                    <p><strong>NPC Price:</strong> 3 coins</p>
+                    <p><strong>XP:</strong> 4 · <strong>NPC:</strong> 3 coins</p>
                     <p class="price-tag" id="info-COCOA_BEANS">Loading...</p>
                 </div>
                 <div class="crop-card">
@@ -263,10 +220,7 @@
                         <img src="https://sky.coflnet.com/static/icon/SUGAR_CANE" alt="Sugar Cane" class="crop-icon">
                         <h3>Sugar Cane</h3>
                     </div>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> No (regrows)</p>
-                    <p><strong>Base drops:</strong> 1 per block</p>
-                    <p><strong>NPC Price:</strong> 2 coins</p>
+                    <p><strong>XP:</strong> 4 · <strong>NPC:</strong> 2 coins</p>
                     <p class="price-tag" id="info-SUGAR_CANE">Loading...</p>
                 </div>
                 <div class="crop-card">
@@ -274,10 +228,7 @@
                         <img src="https://sky.coflnet.com/static/icon/NETHER_STALK" alt="Nether Wart" class="crop-icon">
                         <h3>Nether Wart</h3>
                     </div>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> Yes</p>
-                    <p><strong>Base drops:</strong> 1 (vanilla avg: 3)</p>
-                    <p><strong>NPC Price:</strong> 3 coins</p>
+                    <p><strong>XP:</strong> 4 · <strong>NPC:</strong> 3 coins</p>
                     <p class="price-tag" id="info-NETHER_STALK">Loading...</p>
                 </div>
                 <div class="crop-card">
@@ -285,10 +236,7 @@
                         <img src="https://sky.coflnet.com/static/icon/CACTUS" alt="Cactus" class="crop-icon">
                         <h3>Cactus</h3>
                     </div>
-                    <p><strong>XP per harvest:</strong> 4</p>
-                    <p><strong>Replenish:</strong> No (regrows)</p>
-                    <p><strong>Base drops:</strong> 1 per block</p>
-                    <p><strong>NPC Price:</strong> 1 coin</p>
+                    <p><strong>XP:</strong> 4 · <strong>NPC:</strong> 1 coin</p>
                     <p class="price-tag" id="info-CACTUS">Loading...</p>
                 </div>
             </div>
@@ -296,8 +244,7 @@
     </main>
 
     <footer>
-        <p>Prices fetched from the <a href="https://api.hypixel.net/" target="_blank">Hypixel API</a> via Bazaar data</p>
-        <p>NPC prices from <a href="https://wiki.hypixel.net/" target="_blank">Hypixel Wiki</a></p>
+        <p>Prices from <a href="https://api.hypixel.net/" target="_blank">Hypixel API</a> · NPC prices from <a href="https://wiki.hypixel.net/" target="_blank">Wiki</a></p>
         <p>Made with 🌱 for SkyBlock farmers</p>
     </footer>
 

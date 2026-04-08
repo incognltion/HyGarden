@@ -1,8 +1,7 @@
 // =====================================================
-// SKYBLOCK GARDEN HUB - ADVANCED FARMING CALCULATOR
+// SKYBLOCK GARDEN HUB - FARMING CALCULATOR
 // =====================================================
 
-// Crop items we want to track from the Bazaar
 const GARDEN_CROPS = {
     'WHEAT': 'Wheat',
     'CARROT_ITEM': 'Carrot',
@@ -16,11 +15,8 @@ const GARDEN_CROPS = {
     'MUSHROOM_COLLECTION': 'Mushroom',
 };
 
-// =====================================================
-// OFFICIAL NPC SELL PRICES (From Hypixel SkyBlock Wiki)
-// =====================================================
+// Official NPC sell prices (from Hypixel Wiki)
 const NPC_SELL_PRICES = {
-    // Base crops
     'WHEAT': 1,
     'CARROT_ITEM': 1,
     'POTATO_ITEM': 1,
@@ -30,15 +26,12 @@ const NPC_SELL_PRICES = {
     'SUGAR_CANE': 2,
     'NETHER_STALK': 3,
     'CACTUS': 1,
+    'MUSHROOM_COLLECTION': 4,
     'RED_MUSHROOM': 4,
     'BROWN_MUSHROOM': 4,
-    'MUSHROOM_COLLECTION': 4,
-    'SEEDS': 0.5,
-    'POISONOUS_POTATO': 1,
     
-    // Enchanted Tier 1
+    // Enchanted T1
     'ENCHANTED_WHEAT': 160,
-    'ENCHANTED_BREAD': 120,
     'ENCHANTED_CARROT': 160,
     'ENCHANTED_POTATO': 160,
     'ENCHANTED_PUMPKIN': 640,
@@ -46,13 +39,10 @@ const NPC_SELL_PRICES = {
     'ENCHANTED_COCOA': 480,
     'ENCHANTED_SUGAR': 320,
     'ENCHANTED_CACTUS_GREEN': 160,
-    'ENCHANTED_CACTUS': 160,
     'ENCHANTED_NETHER_STALK': 480,
     'ENCHANTED_RED_MUSHROOM': 640,
-    'ENCHANTED_BROWN_MUSHROOM': 640,
-    'ENCHANTED_SEEDS': 80,
     
-    // Enchanted Tier 2
+    // Enchanted T2
     'ENCHANTED_HAY_BALE': 25600,
     'ENCHANTED_GOLDEN_CARROT': 25600,
     'ENCHANTED_BAKED_POTATO': 25600,
@@ -61,132 +51,71 @@ const NPC_SELL_PRICES = {
     'ENCHANTED_SUGAR_CANE': 51200,
     'MUTANT_NETHER_STALK': 76800,
     'ENCHANTED_RED_MUSHROOM_BLOCK': 102400,
-    'ENCHANTED_BROWN_MUSHROOM_BLOCK': 102400,
 };
 
-// =====================================================
-// BASE DROPS PER BREAK (SkyBlock mechanics)
-// =====================================================
-// In SkyBlock, fortune is applied to a base drop of 1 for most crops
-// The formula is: drops = 1 × (1 + fortune/100)
-const BASE_DROPS = {
-    'WHEAT': 1,
-    'CARROT_ITEM': 1,
-    'POTATO_ITEM': 1,
-    'PUMPKIN': 1,
-    'MELON': 1,           // Fortune applies per slice
-    'COCOA_BEANS': 1,
-    'SUGAR_CANE': 1,      // Per block broken
-    'NETHER_STALK': 1,
-    'CACTUS': 1,          // Per block broken
-    'MUSHROOM_COLLECTION': 1,
-};
-
-// =====================================================
-// FARMING XP PER CROP BREAK
-// =====================================================
 const XP_PER_BREAK = {
-    'WHEAT': 4,
-    'CARROT_ITEM': 4,
-    'POTATO_ITEM': 4,
-    'PUMPKIN': 4.5,
-    'MELON': 4.5,
-    'COCOA_BEANS': 4,
-    'SUGAR_CANE': 4,
-    'NETHER_STALK': 4,
-    'CACTUS': 4,
+    'WHEAT': 4, 'CARROT_ITEM': 4, 'POTATO_ITEM': 4,
+    'PUMPKIN': 4.5, 'MELON': 4.5, 'COCOA_BEANS': 4,
+    'SUGAR_CANE': 4, 'NETHER_STALK': 4, 'CACTUS': 4,
     'MUSHROOM_COLLECTION': 4,
 };
 
-// =====================================================
-// EXTRA ITEMS TO TRACK
-// =====================================================
 const EXTRA_ITEMS = {
     'ENCHANTED_WHEAT': '✨ Ench. Wheat',
-    'ENCHANTED_HAY_BALE': '✨ Ench. Hay Bale',
+    'ENCHANTED_HAY_BALE': '✨ Hay Bale',
     'ENCHANTED_CARROT': '✨ Ench. Carrot',
-    'ENCHANTED_GOLDEN_CARROT': '✨ Ench. Golden Carrot',
+    'ENCHANTED_GOLDEN_CARROT': '✨ Golden Carrot',
     'ENCHANTED_POTATO': '✨ Ench. Potato',
-    'ENCHANTED_BAKED_POTATO': '✨ Ench. Baked Potato',
+    'ENCHANTED_BAKED_POTATO': '✨ Baked Potato',
     'ENCHANTED_PUMPKIN': '✨ Ench. Pumpkin',
     'POLISHED_PUMPKIN': '✨ Polished Pumpkin',
     'ENCHANTED_MELON': '✨ Ench. Melon',
-    'ENCHANTED_MELON_BLOCK': '✨ Ench. Melon Block',
+    'ENCHANTED_MELON_BLOCK': '✨ Melon Block',
     'ENCHANTED_SUGAR': '✨ Ench. Sugar',
-    'ENCHANTED_SUGAR_CANE': '✨ Ench. Sugar Cane',
+    'ENCHANTED_SUGAR_CANE': '✨ Sugar Cane',
     'ENCHANTED_COCOA': '✨ Ench. Cocoa',
-    'ENCHANTED_CACTUS_GREEN': '✨ Ench. Cactus Green',
-    'ENCHANTED_NETHER_STALK': '✨ Ench. Nether Wart',
-    'MUTANT_NETHER_STALK': '✨ Mutant Nether Wart',
+    'ENCHANTED_CACTUS_GREEN': '✨ Ench. Cactus',
+    'ENCHANTED_NETHER_STALK': '✨ Ench. Wart',
+    'MUTANT_NETHER_STALK': '✨ Mutant Wart',
 };
 
-// =====================================================
-// ENCHANTING RECIPES
-// =====================================================
 const ENCHANTING_RECIPES = {
-    'WHEAT': {
-        tier1: { result: 'ENCHANTED_WHEAT', amount: 160 },
-        tier2: { result: 'ENCHANTED_HAY_BALE', amount: 25600 }
-    },
-    'CARROT_ITEM': {
-        tier1: { result: 'ENCHANTED_CARROT', amount: 160 },
-        tier2: { result: 'ENCHANTED_GOLDEN_CARROT', amount: 25600 }
-    },
-    'POTATO_ITEM': {
-        tier1: { result: 'ENCHANTED_POTATO', amount: 160 },
-        tier2: { result: 'ENCHANTED_BAKED_POTATO', amount: 25600 }
-    },
-    'PUMPKIN': {
-        tier1: { result: 'ENCHANTED_PUMPKIN', amount: 160 },
-        tier2: { result: 'POLISHED_PUMPKIN', amount: 25600 }
-    },
-    'MELON': {
-        tier1: { result: 'ENCHANTED_MELON', amount: 160 },
-        tier2: { result: 'ENCHANTED_MELON_BLOCK', amount: 25600 }
-    },
-    'SUGAR_CANE': {
-        tier1: { result: 'ENCHANTED_SUGAR', amount: 160 },
-        tier2: { result: 'ENCHANTED_SUGAR_CANE', amount: 25600 }
-    },
-    'COCOA_BEANS': {
-        tier1: { result: 'ENCHANTED_COCOA', amount: 160 }
-    },
-    'NETHER_STALK': {
-        tier1: { result: 'ENCHANTED_NETHER_STALK', amount: 160 },
-        tier2: { result: 'MUTANT_NETHER_STALK', amount: 25600 }
-    },
-    'CACTUS': {
-        tier1: { result: 'ENCHANTED_CACTUS_GREEN', amount: 160 },
-        tier2: { result: 'ENCHANTED_CACTUS', amount: 25600 }
-    },
-    'MUSHROOM_COLLECTION': {
-        tier1: { result: 'ENCHANTED_RED_MUSHROOM', amount: 160 },
-        tier2: { result: 'ENCHANTED_RED_MUSHROOM_BLOCK', amount: 25600 }
-    }
+    'WHEAT': { t1: { id: 'ENCHANTED_WHEAT', cost: 160 }, t2: { id: 'ENCHANTED_HAY_BALE', cost: 25600 } },
+    'CARROT_ITEM': { t1: { id: 'ENCHANTED_CARROT', cost: 160 }, t2: { id: 'ENCHANTED_GOLDEN_CARROT', cost: 25600 } },
+    'POTATO_ITEM': { t1: { id: 'ENCHANTED_POTATO', cost: 160 }, t2: { id: 'ENCHANTED_BAKED_POTATO', cost: 25600 } },
+    'PUMPKIN': { t1: { id: 'ENCHANTED_PUMPKIN', cost: 160 }, t2: { id: 'POLISHED_PUMPKIN', cost: 25600 } },
+    'MELON': { t1: { id: 'ENCHANTED_MELON', cost: 160 }, t2: { id: 'ENCHANTED_MELON_BLOCK', cost: 25600 } },
+    'SUGAR_CANE': { t1: { id: 'ENCHANTED_SUGAR', cost: 160 }, t2: { id: 'ENCHANTED_SUGAR_CANE', cost: 25600 } },
+    'COCOA_BEANS': { t1: { id: 'ENCHANTED_COCOA', cost: 160 } },
+    'NETHER_STALK': { t1: { id: 'ENCHANTED_NETHER_STALK', cost: 160 }, t2: { id: 'MUTANT_NETHER_STALK', cost: 25600 } },
+    'CACTUS': { t1: { id: 'ENCHANTED_CACTUS_GREEN', cost: 160 } },
+    'MUSHROOM_COLLECTION': { t1: { id: 'ENCHANTED_RED_MUSHROOM', cost: 160 }, t2: { id: 'ENCHANTED_RED_MUSHROOM_BLOCK', cost: 25600 } },
 };
 
-// =====================================================
-// CULTIVATING MILESTONES (fortune bonus)
-// =====================================================
-const CULTIVATING_MILESTONES = [
-    { count: 1000, bonus: 1 },
-    { count: 5000, bonus: 2 },
-    { count: 25000, bonus: 3 },
-    { count: 100000, bonus: 4 },
-    { count: 300000, bonus: 5 },
-    { count: 1500000, bonus: 6 },
-    { count: 5000000, bonus: 7 },
-    { count: 20000000, bonus: 8 },
-    { count: 100000000, bonus: 9 },
-    { count: 1000000000, bonus: 10 }
-];
+// Mooshroom Cow pet fortune per rarity (at level 100)
+const MOOSHROOM_FORTUNE = {
+    'common': { base: 10, perLevel: 0.1 },
+    'uncommon': { base: 10, perLevel: 0.15 },
+    'rare': { base: 15, perLevel: 0.2 },
+    'epic': { base: 20, perLevel: 0.25 },
+    'legendary': { base: 25, perLevel: 0.3 },
+    'mythic': { base: 30, perLevel: 0.35 },
+};
 
-// =====================================================
-// GLOBAL STATE
-// =====================================================
+// Elephant pet: fortune = 0.15-0.25 * (speed - 100) based on rarity
+const ELEPHANT_FORTUNE_MULT = {
+    'common': 0.15,
+    'uncommon': 0.17,
+    'rare': 0.19,
+    'epic': 0.21,
+    'legendary': 0.25,
+    'mythic': 0.27,
+};
+
 let bazaarData = {};
 let priceHistory = {};
 let currentChart = null;
+let activePet = null;
 
 // =====================================================
 // UTILITY FUNCTIONS
@@ -197,41 +126,94 @@ function getItemIcon(itemId) {
 }
 
 function formatCoins(amount) {
-    if (amount === null || amount === undefined || isNaN(amount)) return '0 coins';
-    if (amount >= 1000000000) {
-        return `${(amount / 1000000000).toFixed(2)}B coins`;
-    } else if (amount >= 1000000) {
-        return `${(amount / 1000000).toFixed(2)}M coins`;
-    } else if (amount >= 1000) {
-        return `${(amount / 1000).toFixed(2)}K coins`;
-    }
+    if (amount === null || isNaN(amount)) return '0 coins';
+    if (amount >= 1e9) return `${(amount / 1e9).toFixed(2)}B coins`;
+    if (amount >= 1e6) return `${(amount / 1e6).toFixed(2)}M coins`;
+    if (amount >= 1e3) return `${(amount / 1e3).toFixed(2)}K coins`;
     return `${amount.toFixed(1)} coins`;
 }
 
 function formatNumber(num) {
-    if (num === null || num === undefined || isNaN(num)) return '0';
-    if (num >= 1000000000) {
-        return `${(num / 1000000000).toFixed(2)}B`;
-    } else if (num >= 1000000) {
-        return `${(num / 1000000).toFixed(2)}M`;
-    } else if (num >= 1000) {
-        return `${(num / 1000).toFixed(2)}K`;
-    }
+    if (num >= 1e9) return `${(num / 1e9).toFixed(2)}B`;
+    if (num >= 1e6) return `${(num / 1e6).toFixed(2)}M`;
+    if (num >= 1e3) return `${(num / 1e3).toFixed(1)}K`;
     return num.toLocaleString();
 }
 
 function formatTime(seconds) {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m`;
+}
+
+// =====================================================
+// PET FUNCTIONS
+// =====================================================
+
+function togglePetOptions(pet) {
+    const mooshroomChecked = document.getElementById('mooshroom-pet')?.checked;
+    const elephantChecked = document.getElementById('elephant-pet')?.checked;
     
-    if (hours > 0) {
-        return `${hours}h ${minutes}m ${secs}s`;
-    } else if (minutes > 0) {
-        return `${minutes}m ${secs}s`;
+    const petOptions = document.getElementById('pet-options');
+    const elephantOptions = document.getElementById('elephant-options');
+    
+    // Only one pet can be active
+    if (pet === 'mooshroom' && mooshroomChecked) {
+        document.getElementById('elephant-pet').checked = false;
+        activePet = 'mooshroom';
+        petOptions.style.display = 'block';
+        elephantOptions.style.display = 'none';
+        updatePetBonus();
+    } else if (pet === 'elephant' && elephantChecked) {
+        document.getElementById('mooshroom-pet').checked = false;
+        activePet = 'elephant';
+        petOptions.style.display = 'block';
+        elephantOptions.style.display = 'block';
+        updatePetBonus();
     } else {
-        return `${secs}s`;
+        activePet = null;
+        petOptions.style.display = 'none';
+        elephantOptions.style.display = 'none';
     }
+}
+
+function updatePetBonus() {
+    const rarity = document.getElementById('pet-rarity')?.value || 'legendary';
+    const level = parseInt(document.getElementById('pet-level')?.value) || 100;
+    const speed = parseInt(document.getElementById('player-speed')?.value) || 100;
+    
+    const petDisplay = document.getElementById('pet-bonus-display');
+    const elephantDisplay = document.getElementById('elephant-bonus-display');
+    
+    if (activePet === 'mooshroom') {
+        const data = MOOSHROOM_FORTUNE[rarity];
+        const fortune = data.base + (data.perLevel * level);
+        petDisplay.innerHTML = `🐄 <strong>+${fortune.toFixed(1)} Mushroom Fortune</strong> (only works on mushrooms)`;
+    } else if (activePet === 'elephant') {
+        const mult = ELEPHANT_FORTUNE_MULT[rarity];
+        const fortune = mult * (speed - 100);
+        petDisplay.innerHTML = `🐘 <strong>Elephant Pet</strong> - ${rarity} Lv${level}`;
+        elephantDisplay.innerHTML = `🍀 <strong>+${fortune.toFixed(1)} Farming Fortune</strong> from ${speed} speed`;
+    }
+}
+
+function getPetFortune(cropId) {
+    if (!activePet) return 0;
+    
+    const rarity = document.getElementById('pet-rarity')?.value || 'legendary';
+    const level = parseInt(document.getElementById('pet-level')?.value) || 100;
+    const speed = parseInt(document.getElementById('player-speed')?.value) || 100;
+    
+    if (activePet === 'mooshroom' && cropId === 'MUSHROOM_COLLECTION') {
+        const data = MOOSHROOM_FORTUNE[rarity];
+        return data.base + (data.perLevel * level);
+    } else if (activePet === 'elephant') {
+        const mult = ELEPHANT_FORTUNE_MULT[rarity];
+        return mult * (speed - 100);
+    }
+    
+    return 0;
 }
 
 // =====================================================
@@ -250,22 +232,21 @@ async function fetchBazaarData() {
             updateCropInfoPrices();
             document.getElementById('loading').style.display = 'none';
         } else {
-            document.getElementById('loading').textContent = 'Failed to load prices. Try refreshing.';
+            document.getElementById('loading').textContent = 'Failed to load. Refresh page.';
         }
     } catch (error) {
-        console.error('Error fetching bazaar data:', error);
-        document.getElementById('loading').textContent = 'Error loading prices. API might be down.';
+        console.error('Error:', error);
+        document.getElementById('loading').textContent = 'API error. Try refreshing.';
     }
 }
 
 function storePriceHistory() {
     const timestamp = Date.now();
+    const sevenDaysAgo = timestamp - (7 * 24 * 60 * 60 * 1000);
     
     for (const itemId of Object.keys({...GARDEN_CROPS, ...EXTRA_ITEMS})) {
         if (bazaarData[itemId]) {
-            if (!priceHistory[itemId]) {
-                priceHistory[itemId] = [];
-            }
+            if (!priceHistory[itemId]) priceHistory[itemId] = [];
             
             priceHistory[itemId].push({
                 time: timestamp,
@@ -273,28 +254,18 @@ function storePriceHistory() {
                 buyPrice: bazaarData[itemId].quick_status.buyPrice
             });
             
-            // Keep only last 7 days of data
-            const sevenDaysAgo = timestamp - (7 * 24 * 60 * 60 * 1000);
             priceHistory[itemId] = priceHistory[itemId].filter(p => p.time > sevenDaysAgo);
         }
     }
     
-    try {
-        localStorage.setItem('priceHistory', JSON.stringify(priceHistory));
-    } catch (e) {
-        console.warn('Could not save price history to localStorage');
-    }
+    try { localStorage.setItem('priceHistory', JSON.stringify(priceHistory)); } catch (e) {}
 }
 
 function loadPriceHistory() {
     try {
         const stored = localStorage.getItem('priceHistory');
-        if (stored) {
-            priceHistory = JSON.parse(stored);
-        }
-    } catch (e) {
-        console.warn('Could not load price history from localStorage');
-    }
+        if (stored) priceHistory = JSON.parse(stored);
+    } catch (e) {}
 }
 
 // =====================================================
@@ -320,20 +291,15 @@ function displayPrices() {
         card.className = 'price-card';
         card.onclick = () => showPriceGraph(itemId, displayName);
         card.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                <img src="${getItemIcon(itemId)}" 
-                     alt="${displayName}" 
-                     class="crop-icon"
-                     onerror="this.style.display='none'">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <img src="${getItemIcon(itemId)}" alt="${displayName}" style="width: 36px; height: 36px;" onerror="this.style.display='none'">
                 <h3>${displayName}</h3>
             </div>
-            <p class="label">Instant Buy (you pay):</p>
+            <p class="label">Insta-Buy:</p>
             <p class="buy-price">${formatCoins(buyPrice)}</p>
-            <p class="label">Instant Sell (you earn):</p>
+            <p class="label">Insta-Sell:</p>
             <p class="sell-price">${formatCoins(sellPrice)}</p>
-            <p class="label">NPC Sell:</p>
-            <p class="npc-price">${formatCoins(npcPrice)}</p>
-            <p class="label" style="margin-top: 0.5rem; font-size: 0.75rem;">📊 Click for price history</p>
+            <p class="label">NPC: <span class="npc-price">${formatCoins(npcPrice)}</span></p>
         `;
         grid.appendChild(card);
     }
@@ -342,18 +308,10 @@ function displayPrices() {
 function showPriceGraph(itemId, displayName) {
     const modal = document.getElementById('graph-modal');
     const title = document.getElementById('graph-title');
-    
     if (!modal || !title) return;
     
-    title.innerHTML = `
-        <img src="${getItemIcon(itemId)}" 
-             alt="${displayName}" 
-             style="width: 32px; height: 32px;"
-             onerror="this.style.display='none'">
-        ${displayName} - Price History
-    `;
+    title.innerHTML = `<img src="${getItemIcon(itemId)}" style="width: 32px; height: 32px;" onerror="this.style.display='none'"> ${displayName}`;
     modal.style.display = 'block';
-    
     renderPriceChart(itemId);
 }
 
@@ -362,10 +320,7 @@ function renderPriceChart(itemId) {
     if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
-    
-    if (currentChart) {
-        currentChart.destroy();
-    }
+    if (currentChart) currentChart.destroy();
     
     let history = [...(priceHistory[itemId] || [])];
     
@@ -381,434 +336,222 @@ function renderPriceChart(itemId) {
         }
     }
     
-    const labels = history.map(p => new Date(p.time).toLocaleDateString());
-    const sellPrices = history.map(p => p.sellPrice);
-    const buyPrices = history.map(p => p.buyPrice);
-    
     currentChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: labels,
+            labels: history.map(p => new Date(p.time).toLocaleDateString()),
             datasets: [
-                {
-                    label: 'Sell Price',
-                    data: sellPrices,
-                    borderColor: '#ff9999',
-                    backgroundColor: 'rgba(255, 153, 153, 0.1)',
-                    tension: 0.4
-                },
-                {
-                    label: 'Buy Price',
-                    data: buyPrices,
-                    borderColor: '#98d8c8',
-                    backgroundColor: 'rgba(152, 216, 200, 0.1)',
-                    tension: 0.4
-                }
+                { label: 'Sell', data: history.map(p => p.sellPrice), borderColor: '#ff9999', tension: 0.4 },
+                { label: 'Buy', data: history.map(p => p.buyPrice), borderColor: '#98d8c8', tension: 0.4 }
             ]
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: {
-                    labels: { color: '#e0e0e0' }
-                }
-            },
+            plugins: { legend: { labels: { color: '#e0e0e0' } } },
             scales: {
-                y: {
-                    ticks: {
-                        color: '#e0e0e0',
-                        callback: function(value) { return formatCoins(value); }
-                    },
-                    grid: { color: '#4a4a4a' }
-                },
-                x: {
-                    ticks: { color: '#e0e0e0' },
-                    grid: { color: '#4a4a4a' }
-                }
+                y: { ticks: { color: '#e0e0e0', callback: v => formatCoins(v) }, grid: { color: '#4a4a4a' } },
+                x: { ticks: { color: '#e0e0e0' }, grid: { color: '#4a4a4a' } }
             }
         }
     });
 }
 
 function updateCropInfoPrices() {
-    for (const [itemId, displayName] of Object.entries(GARDEN_CROPS)) {
+    for (const [itemId] of Object.entries(GARDEN_CROPS)) {
         const el = document.getElementById(`info-${itemId}`);
         if (el && bazaarData[itemId]) {
-            const sellPrice = bazaarData[itemId].quick_status.sellPrice;
-            el.innerHTML = `💰 Bazaar: ${formatCoins(sellPrice)}`;
+            el.innerHTML = `💰 ${formatCoins(bazaarData[itemId].quick_status.sellPrice)}`;
         }
     }
 }
 
 // =====================================================
-// FORTUNE CALCULATION
-// =====================================================
-
-function calculateTotalFortune(cropId) {
-    // Backwards-compatible: prefer explicit fields if present, otherwise fall back
-    // to the simpler `crop-fortune` and `farming-fortune` inputs used earlier.
-    const cropFortune = parseFloat(document.getElementById('crop-fortune')?.value) || 0;
-    const farmingFortune = parseFloat(document.getElementById('farming-fortune')?.value) || 0;
-
-    const baseFortune = parseFloat(document.getElementById('base-fortune')?.value) || 0;
-    const toolFortune = parseFloat(document.getElementById('tool-fortune')?.value) || 0;
-    const armorFortune = parseFloat(document.getElementById('armor-fortune')?.value) || 0;
-    const petFortune = parseFloat(document.getElementById('pet-fortune')?.value) || 0;
-    const turboLevel = parseInt(document.getElementById('turbo-level')?.value) || 0;
-    const harvestingLevel = parseInt(document.getElementById('harvesting-level')?.value) || 0;
-    const cultivatingCount = parseInt(document.getElementById('cultivating-count')?.value) || 0;
-    const dedicationLevel = parseInt(document.getElementById('dedication-level')?.value) || 0;
-    const gardenLevel = parseInt(document.getElementById('garden-level')?.value) || 1;
-    const cropUpgrade = parseInt(document.getElementById('crop-upgrade')?.value) || 0;
-    const plotBonus = parseFloat(document.getElementById('plot-bonus')?.value) || 0;
-    const extraFortune = parseFloat(document.getElementById('extra-fortune')?.value) || 0;
-    
-    // Turbo enchant: +5 fortune per level (crop specific)
-    const turboBonus = turboLevel * 5;
-    
-    // Harvesting: +12.5 fortune per level
-    const harvestingBonus = harvestingLevel * 12.5;
-    
-    // Cultivating bonus based on counter
-    let cultivatingBonus = 0;
-    for (const milestone of CULTIVATING_MILESTONES) {
-        if (cultivatingCount >= milestone.count) {
-            cultivatingBonus = milestone.bonus;
-        }
-    }
-    
-    // Garden level: approximately 4 fortune per level
-    const gardenLevelBonus = gardenLevel * 4;
-    
-    // Crop upgrade: +5 fortune per level
-    const cropUpgradeBonus = cropUpgrade * 5;
-    
-    // Dedication bonus (simplified - would need milestone data for accuracy)
-    const dedicationBonus = dedicationLevel > 0 ? dedicationLevel * 0.5 : 0;
-    
-    // Include the legacy inputs if they exist (cropFortune + farmingFortune)
-    const total = 
-        baseFortune + 
-        toolFortune + 
-        armorFortune + 
-        petFortune + 
-        turboBonus + 
-        harvestingBonus +
-        cultivatingBonus +
-        gardenLevelBonus +
-        cropUpgradeBonus +
-        plotBonus +
-        extraFortune +
-        dedicationBonus +
-        cropFortune +
-        farmingFortune;
-    
-    return {
-        total: total,
-        breakdown: {
-            'Base Fortune': baseFortune,
-            'Tool Fortune': toolFortune,
-            'Armor Fortune': armorFortune,
-            'Pet Fortune': petFortune,
-            'Turbo Enchant': turboBonus,
-            'Harvesting': harvestingBonus,
-            'Cultivating': cultivatingBonus,
-            'Garden Level': gardenLevelBonus,
-            'Crop Upgrade': cropUpgradeBonus,
-            'Plot Bonus': plotBonus,
-            'Extra Fortune': extraFortune,
-            'Dedication': dedicationBonus
-        }
-    };
-}
-
-// =====================================================
-// DROP CALCULATION
-// =====================================================
-
-function calculateDropsPerBreak(cropId, totalFortune) {
-    const baseDrop = BASE_DROPS[cropId] || 1;
-    const anitaBonus = document.getElementById('anita-bonus')?.checked ? 1.10 : 1.0;
-    const replenishChecked = document.getElementById('replenish')?.checked ? true : false;
-
-    // SkyBlock Fortune formula: drops = base × (1 + fortune/100)
-    const fortuneMultiplier = 1 + (totalFortune / 100);
-
-    let drops = baseDrop * fortuneMultiplier;
-
-    // Apply Anita bonus (10% more crops)
-    drops *= anitaBonus;
-
-    // If Replenish enchant is toggled and crop supports it, add an average +1 drop
-    if (replenishChecked && ['CARROT_ITEM', 'POTATO_ITEM', 'WHEAT', 'COCOA_BEANS', 'NETHER_STALK'].includes(cropId)) {
-        drops += 1;
-    }
-
-    return drops;
-}
-
-// =====================================================
-// SELL STRATEGY CALCULATION
+// CALCULATION FUNCTIONS
 // =====================================================
 
 function calculateSellStrategies(cropId, totalDrops) {
     const strategies = [];
     
-    // Get bazaar prices
     const bazaarSell = bazaarData[cropId]?.quick_status?.sellPrice || 0;
     const bazaarBuy = bazaarData[cropId]?.quick_status?.buyPrice || 0;
     const npcPrice = NPC_SELL_PRICES[cropId] || 0;
     
-    // 1. Raw Bazaar Instant Sell
-    if (bazaarSell > 0) {
-        strategies.push({
-            name: 'Bazaar Instant Sell (Raw)',
-            coins: totalDrops * bazaarSell,
-            description: `${formatNumber(totalDrops)} × ${formatCoins(bazaarSell)}`
-        });
-    }
+    // Raw sells
+    if (bazaarSell > 0) strategies.push({ name: 'Bazaar Insta-Sell', coins: totalDrops * bazaarSell });
+    if (bazaarBuy > 0) strategies.push({ name: 'Bazaar Sell Order', coins: totalDrops * bazaarBuy });
+    if (npcPrice > 0) strategies.push({ name: 'NPC Sell', coins: totalDrops * npcPrice });
     
-    // 2. Raw Bazaar Sell Order
-    if (bazaarBuy > 0) {
-        strategies.push({
-            name: 'Bazaar Sell Order (Raw)',
-            coins: totalDrops * bazaarBuy,
-            description: `${formatNumber(totalDrops)} × ${formatCoins(bazaarBuy)}`
-        });
-    }
-    
-    // 3. NPC Sell
-    if (npcPrice > 0) {
-        strategies.push({
-            name: 'NPC Sell (Raw)',
-            coins: totalDrops * npcPrice,
-            description: `${formatNumber(totalDrops)} × ${formatCoins(npcPrice)}`
-        });
-    }
-    
-    // 4. Enchanted sells
+    // Enchanted sells
     const recipes = ENCHANTING_RECIPES[cropId];
-    if (recipes?.tier1) {
-        const tier1Id = recipes.tier1.result;
-        const tier1Cost = recipes.tier1.amount;
-        const tier1Count = Math.floor(totalDrops / tier1Cost);
-        const leftover = totalDrops - (tier1Count * tier1Cost);
+    if (recipes?.t1) {
+        const t1 = recipes.t1;
+        const t1Count = Math.floor(totalDrops / t1.cost);
+        const leftover = totalDrops - (t1Count * t1.cost);
         
-        const tier1BazaarSell = bazaarData[tier1Id]?.quick_status?.sellPrice || 0;
-        const tier1BazaarBuy = bazaarData[tier1Id]?.quick_status?.buyPrice || 0;
-        const tier1NpcPrice = NPC_SELL_PRICES[tier1Id] || 0;
+        const t1Sell = bazaarData[t1.id]?.quick_status?.sellPrice || 0;
+        const t1Buy = bazaarData[t1.id]?.quick_status?.buyPrice || 0;
+        const t1Npc = NPC_SELL_PRICES[t1.id] || 0;
         
-        // Enchanted Bazaar Instant Sell
-        if (tier1BazaarSell > 0 && tier1Count > 0) {
-            const coins = (tier1Count * tier1BazaarSell) + (leftover * bazaarSell);
-            strategies.push({
-                name: `Bazaar Instant Sell (${EXTRA_ITEMS[tier1Id] || tier1Id})`,
-                coins: coins,
-                description: `${formatNumber(tier1Count)} ench. + ${formatNumber(leftover)} raw`
-            });
+        if (t1Sell > 0 && t1Count > 0) {
+            strategies.push({ name: 'Ench. T1 Insta-Sell', coins: (t1Count * t1Sell) + (leftover * bazaarSell) });
+        }
+        if (t1Buy > 0 && t1Count > 0) {
+            strategies.push({ name: 'Ench. T1 Sell Order', coins: (t1Count * t1Buy) + (leftover * bazaarBuy) });
+        }
+        if (t1Npc > 0 && t1Count > 0) {
+            strategies.push({ name: 'Ench. T1 NPC', coins: (t1Count * t1Npc) + (leftover * npcPrice) });
         }
         
-        // Enchanted Bazaar Sell Order
-        if (tier1BazaarBuy > 0 && tier1Count > 0) {
-            const coins = (tier1Count * tier1BazaarBuy) + (leftover * bazaarBuy);
-            strategies.push({
-                name: `Bazaar Sell Order (${EXTRA_ITEMS[tier1Id] || tier1Id})`,
-                coins: coins,
-                description: `${formatNumber(tier1Count)} ench. + ${formatNumber(leftover)} raw`
-            });
-        }
-        
-        // Enchanted NPC Sell
-        if (tier1NpcPrice > 0 && tier1Count > 0) {
-            const coins = (tier1Count * tier1NpcPrice) + (leftover * npcPrice);
-            strategies.push({
-                name: `NPC Sell (${EXTRA_ITEMS[tier1Id] || tier1Id})`,
-                coins: coins,
-                description: `${formatNumber(tier1Count)} ench. + ${formatNumber(leftover)} raw`
-            });
-        }
-        
-        // Tier 2 enchanted
-        if (recipes.tier2) {
-            const tier2Id = recipes.tier2.result;
-            const tier2Cost = recipes.tier2.amount;
-            const tier2Count = Math.floor(totalDrops / tier2Cost);
-            const tier2Leftover = totalDrops - (tier2Count * tier2Cost);
-            const tier1FromLeftover = Math.floor(tier2Leftover / tier1Cost);
-            const rawLeftover = tier2Leftover - (tier1FromLeftover * tier1Cost);
+        // T2
+        if (recipes.t2) {
+            const t2 = recipes.t2;
+            const t2Count = Math.floor(totalDrops / t2.cost);
+            const t2Left = totalDrops - (t2Count * t2.cost);
+            const t1FromLeft = Math.floor(t2Left / t1.cost);
+            const rawLeft = t2Left - (t1FromLeft * t1.cost);
             
-            const tier2BazaarSell = bazaarData[tier2Id]?.quick_status?.sellPrice || 0;
-            const tier2BazaarBuy = bazaarData[tier2Id]?.quick_status?.buyPrice || 0;
-            const tier2NpcPrice = NPC_SELL_PRICES[tier2Id] || 0;
+            const t2Sell = bazaarData[t2.id]?.quick_status?.sellPrice || 0;
+            const t2Buy = bazaarData[t2.id]?.quick_status?.buyPrice || 0;
             
-            if (tier2BazaarSell > 0 && tier2Count > 0) {
-                const coins = (tier2Count * tier2BazaarSell) + 
-                             (tier1FromLeftover * tier1BazaarSell) + 
-                             (rawLeftover * bazaarSell);
-                strategies.push({
-                    name: `Bazaar Instant Sell (${EXTRA_ITEMS[tier2Id] || tier2Id})`,
-                    coins: coins,
-                    description: `${formatNumber(tier2Count)} T2 + ${formatNumber(tier1FromLeftover)} T1 + ${formatNumber(rawLeftover)} raw`
+            if (t2Sell > 0 && t2Count > 0) {
+                strategies.push({ 
+                    name: 'Ench. T2 Insta-Sell', 
+                    coins: (t2Count * t2Sell) + (t1FromLeft * t1Sell) + (rawLeft * bazaarSell) 
                 });
             }
-            
-            if (tier2BazaarBuy > 0 && tier2Count > 0) {
-                const coins = (tier2Count * tier2BazaarBuy) + 
-                             (tier1FromLeftover * tier1BazaarBuy) + 
-                             (rawLeftover * bazaarBuy);
-                strategies.push({
-                    name: `Bazaar Sell Order (${EXTRA_ITEMS[tier2Id] || tier2Id})`,
-                    coins: coins,
-                    description: `${formatNumber(tier2Count)} T2 + ${formatNumber(tier1FromLeftover)} T1 + ${formatNumber(rawLeftover)} raw`
-                });
-            }
-            
-            if (tier2NpcPrice > 0 && tier2Count > 0) {
-                const coins = (tier2Count * tier2NpcPrice) + 
-                             (tier1FromLeftover * tier1NpcPrice) + 
-                             (rawLeftover * npcPrice);
-                strategies.push({
-                    name: `NPC Sell (${EXTRA_ITEMS[tier2Id] || tier2Id})`,
-                    coins: coins,
-                    description: `${formatNumber(tier2Count)} T2 + ${formatNumber(tier1FromLeftover)} T1 + ${formatNumber(rawLeftover)} raw`
+            if (t2Buy > 0 && t2Count > 0) {
+                strategies.push({ 
+                    name: 'Ench. T2 Sell Order', 
+                    coins: (t2Count * t2Buy) + (t1FromLeft * t1Buy) + (rawLeft * bazaarBuy) 
                 });
             }
         }
     }
     
-    // Sort by profit (highest first)
-    strategies.sort((a, b) => b.coins - a.coins);
-    
-    return strategies;
+    return strategies.sort((a, b) => b.coins - a.coins);
 }
-
-// =====================================================
-// MAIN CALCULATION FUNCTION
-// =====================================================
 
 function calculateAdvancedProfit() {
     const cropId = document.getElementById('crop-select').value;
+    const farmingFortune = parseFloat(document.getElementById('farming-fortune')?.value) || 0;
+    const cropFortune = parseFloat(document.getElementById('crop-fortune')?.value) || 0;
+    const farmingWisdom = parseFloat(document.getElementById('farming-wisdom')?.value) || 0;
     const breakSpeed = parseFloat(document.getElementById('break-speed')?.value) || 20;
     const farmTime = parseInt(document.getElementById('farm-time')?.value) || 60;
-    const resultDiv = document.getElementById('calc-result');
-    const derpyBonus = document.getElementById('derpy-bonus')?.checked ? 1.5 : 1.0;
     
+    const anitaBonus = document.getElementById('anita-bonus')?.checked ? 1.10 : 1.0;
+    const derpyActive = document.getElementById('derpy-active')?.checked;
+    
+    const resultDiv = document.getElementById('calc-result');
     if (!resultDiv) return;
     
-    // Calculate fortune
-    const fortuneData = calculateTotalFortune(cropId);
-    const totalFortune = fortuneData.total;
+    // Get pet fortune
+    const petFortune = getPetFortune(cropId);
+    
+    // Total fortune = farming fortune + crop fortune + pet
+    const totalFortune = farmingFortune + cropFortune + petFortune;
+    
+    // Fortune multiplier: drops = 1 × (1 + fortune/100)
+    const fortuneMultiplier = 1 + (totalFortune / 100);
     
     // Calculate drops
-    const dropsPerBreak = calculateDropsPerBreak(cropId, totalFortune);
+    const dropsPerBreak = 1 * fortuneMultiplier * anitaBonus;
     
     // Calculate totals
     const totalSeconds = farmTime * 60;
     const totalBreaks = breakSpeed * totalSeconds;
     const totalDrops = Math.floor(totalBreaks * dropsPerBreak);
     
-    // Calculate XP
-    const xpPerBreak = XP_PER_BREAK[cropId] || 4;
-    const totalXP = Math.floor(totalBreaks * xpPerBreak * derpyBonus);
+    // Calculate XP (wisdom increases XP by wisdom%)
+    const baseXP = XP_PER_BREAK[cropId] || 4;
+    const wisdomMult = 1 + (farmingWisdom / 100);
+    const derpyMult = derpyActive ? 1.5 : 1.0;
+    const totalXP = Math.floor(totalBreaks * baseXP * wisdomMult * derpyMult);
     
     // Get sell strategies
     const strategies = calculateSellStrategies(cropId, totalDrops);
-    const bestStrategy = strategies[0] || { name: 'N/A', coins: 0, description: 'No data' };
+    let bestStrategy = strategies[0] || { name: 'N/A', coins: 0 };
     
-    // Build fortune breakdown HTML
-    const fortuneBreakdownHtml = Object.entries(fortuneData.breakdown)
-        .filter(([key, val]) => val > 0)
-        .map(([key, val]) => `<span class="fortune-tag">${key}: +${val.toFixed(1)}</span>`)
-        .join('');
+    // Apply Derpy coin reduction (-50% coins if Derpy)
+    if (derpyActive) {
+        strategies.forEach(s => s.coins *= 0.5);
+        bestStrategy = strategies[0] || { name: 'N/A', coins: 0 };
+    }
     
-    // Build strategies HTML
-    const strategiesHtml = strategies.slice(0, 6).map((s, i) => `
-        <div class="strategy-item ${i === 0 ? 'best-strategy' : ''}">
-            <div class="strategy-info">
-                <span class="strategy-name">${i === 0 ? '👑 ' : ''}${s.name}</span>
-                <span class="strategy-desc">${s.description}</span>
-            </div>
+    // Hourly rates
+    const hours = farmTime / 60;
+    const coinsPerHour = bestStrategy.coins / hours;
+    const xpPerHour = totalXP / hours;
+    
+    // Build HTML
+    const strategiesHtml = strategies.slice(0, 5).map((s, i) => `
+        <div class="strategy-item ${i === 0 ? 'best' : ''}">
+            <span class="strategy-name">${i === 0 ? '👑 ' : ''}${s.name}</span>
             <span class="strategy-coins">${formatCoins(s.coins)}</span>
         </div>
     `).join('');
     
-    // Calculate hourly rates
-    const hoursSpent = farmTime / 60;
-    const coinsPerHour = bestStrategy.coins / hoursSpent;
-    const xpPerHour = totalXP / hoursSpent;
-    const cropsPerHour = totalDrops / hoursSpent;
-    
     resultDiv.innerHTML = `
         <div class="result-header">
-            <img src="${getItemIcon(cropId)}" 
-                 alt="${GARDEN_CROPS[cropId]}" 
-                 class="crop-icon"
-                 style="width: 64px; height: 64px;"
-                 onerror="this.style.display='none'">
+            <img src="${getItemIcon(cropId)}" alt="${GARDEN_CROPS[cropId]}" class="crop-icon" onerror="this.style.display='none'">
             <div>
-                <h3>📊 ${GARDEN_CROPS[cropId]} Farming Results</h3>
-                <p style="color: #999; margin: 0;">Duration: ${farmTime} minutes (${formatTime(totalSeconds)})</p>
+                <h3>${GARDEN_CROPS[cropId]} Results</h3>
+                <p>${farmTime} minutes farming</p>
             </div>
         </div>
         
         <div class="result-section">
-            <h4>🍀 Fortune Breakdown</h4>
-            <p><strong>Total Farming Fortune:</strong> <span class="highlight-value">${totalFortune.toFixed(1)}</span></p>
-            <div class="fortune-tags">
-                ${fortuneBreakdownHtml || '<span class="fortune-tag">No bonuses configured</span>'}
-            </div>
-            <p><strong>Fortune Multiplier:</strong> ${(1 + totalFortune/100).toFixed(2)}x drops</p>
+            <h4>🍀 Fortune</h4>
+            <p>Overall Fortune: <span class="highlight-value">${farmingFortune}</span></p>
+            <p>Crop Fortune: <span class="highlight-value">${cropFortune}</span></p>
+            ${petFortune > 0 ? `<p>Pet Fortune: <span class="highlight-value">+${petFortune.toFixed(1)}</span></p>` : ''}
+            <p><strong>Total: ${totalFortune.toFixed(1)}</strong> → <strong>${fortuneMultiplier.toFixed(2)}x</strong> drops</p>
         </div>
         
         <div class="result-section">
-            <h4>📦 Collection Stats</h4>
+            <h4>📦 Collection</h4>
             <div class="stats-grid">
                 <div class="stat-item">
                     <div class="stat-value">${formatNumber(totalBreaks)}</div>
-                    <div class="stat-label">Blocks Broken</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">${dropsPerBreak.toFixed(2)}</div>
-                    <div class="stat-label">Drops/Break</div>
+                    <div class="stat-label">Blocks</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">${formatNumber(totalDrops)}</div>
-                    <div class="stat-label">Total Crops</div>
+                    <div class="stat-label">Crops</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">${formatNumber(totalXP)}</div>
-                    <div class="stat-label">Farming XP</div>
+                    <div class="stat-label">XP</div>
                 </div>
             </div>
         </div>
         
-        <div class="result-section">
-            <h4>💰 Sell Strategies</h4>
-            <div class="strategies-container">
-                ${strategiesHtml || '<p style="color: #999;">No pricing data available</p>'}
-            </div>
-        </div>
-        
-        <div class="result-section highlight-section">
-            <h4>🏆 Best Profit</h4>
+        <div class="best-profit-box">
+            <h4>💰 Best Profit</h4>
             <div class="big-number">${formatCoins(bestStrategy.coins)}</div>
-            <p style="margin: 0;">${bestStrategy.name}</p>
+            <div class="method">${bestStrategy.name}</div>
+            ${derpyActive ? '<p style="color:#ff9999;font-size:0.8rem;">⚠️ Derpy: -50% coins applied</p>' : ''}
         </div>
         
         <div class="result-section">
-            <h4>📈 Hourly Rates</h4>
+            <h4>💹 Sell Options</h4>
+            <div class="strategies-container">${strategiesHtml}</div>
+        </div>
+        
+        <div class="result-section">
+            <h4>📈 Per Hour</h4>
             <div class="stats-grid">
                 <div class="stat-item">
                     <div class="stat-value">${formatCoins(coinsPerHour)}</div>
-                    <div class="stat-label">Coins/Hour</div>
+                    <div class="stat-label">Coins</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">${formatNumber(Math.floor(xpPerHour))}</div>
-                    <div class="stat-label">XP/Hour</div>
+                    <div class="stat-label">XP</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">${formatNumber(Math.floor(cropsPerHour))}</div>
-                    <div class="stat-label">Crops/Hour</div>
+                    <div class="stat-value">${formatNumber(Math.floor(totalDrops / hours))}</div>
+                    <div class="stat-label">Crops</div>
                 </div>
             </div>
         </div>
@@ -820,28 +563,19 @@ function calculateAdvancedProfit() {
 // =====================================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Modal close functionality
     const modal = document.getElementById('graph-modal');
     const closeBtn = document.getElementsByClassName('close')[0];
     
     if (closeBtn) {
-        closeBtn.onclick = function() {
-            modal.style.display = 'none';
-        }
+        closeBtn.onclick = () => modal.style.display = 'none';
     }
     
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
+    window.onclick = (e) => {
+        if (e.target == modal) modal.style.display = 'none';
     }
     
-    // Load saved price history
     loadPriceHistory();
-    
-    // Fetch initial data
     fetchBazaarData();
 });
 
-// Refresh prices every 60 seconds
 setInterval(fetchBazaarData, 60000);
